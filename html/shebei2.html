@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>设备列表</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/switch-buttons.css">
+    <link rel="stylesheet" href="../css/tree.css" />
+    <style type="text/css" media="screen">
+        .zt{
+            display: none;
+        }
+        label{
+            float: left;
+            margin-right:10px;
+            margin-top:5px;
+        }
+        label input{margin:0 5px;}
+        #zhuangtai{margin-right: 10px}
+        .third,.fourth{display: none;}
+        .first>li{cursor:pointer;}
+        .second>li{cursor: pointer;}
+         .third>li{position: relative; display: block;flex-wrap: wrap;padding-left:25px;flex-direction: column;padding:3px 0 3px 41px;}
+         .third>li>.flex{height:36px;cursor:pointer;} 
+        .fourth table{margin-left:15px;margin-bottom: 10px;margin-top:10px;}
+
+        .third>p{width:140px;height:100%;text-align: center;}
+        .first .title,.first .title2{float: left;padding-left:20px;}
+        .first .title>p,.first .title2>p{float: left;width:143px;height:100%;text-align: center;}
+        .eqimei_title{width:245px !important;}
+
+        .first .title2{display: none;}
+        .first .title2>p{width:104px;}
+        .first .title2 .eqimei_title1{width:240px;}
+        .third1{padding-left:63px;border-top:1px solid #ccc;display: none;}
+        .third1>p{width:99px;height:100%;text-align: center;}
+        .tdnone{display: none;}
+        .shebeitishi{
+            position: absolute;
+            width:80px;
+            top:-10px;
+            left:0px;
+            border-radius: 5px;
+            border:1px solid #ccc;
+            background: #00BFFF;
+            color:#fff;
+            font-style: normal;
+            padding:0 10px;
+            opacity: 0.6;
+            z-index: 999;
+            display: none;
+        }
+        .third>li>.flex{
+            display: flex;
+            justify-content: space-between;
+        }
+        .searthird{
+            display: block;
+        }
+        .jiaimg{
+            float:left;
+            margin-top:10px;
+            margin-left:10px;
+            margin-right:5px;
+            transform: rotate(0deg)
+        }
+        .second li>.jiaimg{
+            margin-left:30px;
+        }
+        .third li>.jiaimg{
+            margin-left:30px;
+        }
+        #pagination{bottom:1%;}
+        table{cursor:context-menu;}
+        select,button,label,a{cursor:pointer;}
+        .second>li>.flex{padding-left:20px;}   
+        .switch-btn1{
+            position: absolute;
+            left:1015px;
+            top:8px;
+            z-index:999;
+        } 
+        .switch-btn1 .checked-switch:checked ~ .text-switch{
+            background: #ccc;
+        }
+        .switch-btn1 .checked-switch:checked ~ .toggle-btn{
+            left:0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-box">设备列表<span class="tianjia" style="margin-left: 10px;"><a style="border-bottom: 1px solid #fff;">添加设备</a></span><span style="float:right;margin-right: 20px"><input id="zhuangtai" type="checkbox">状态/操作</span></div>
+        <div class="search" style="margin-left: 1%;">
+            <select class="eqinput">
+                <option value="医院名称" selecttype="0">医院名称</option>
+                <option value="imei号" selecttype="1">imei号</option>
+                <option value="SIM号" selecttype="2">SIM号</option>
+                <option value="使用者" selecttype="3">使用者</option>
+            </select>
+            <input type="text" id="input" style="float:left;" placeholder="请输入关键字">
+            <button class="button" onclick="searchFn(this)" style="margin-left: 0%;">搜索</button>
+            <!--  -->
+            <label for="shiyong"><input type="radio" name="used" id="shiyong" value="已使用" checked />已使用</label>
+            <label for="weishiyong"><input type="radio" name="used" id="weishiyong" onclick="wsyClickFn()" value="未使用"/>未使用</label> 
+        </div>
+        <div class="zhezhao"></div>
+
+        <div class="deposi" style="height: 240px;">
+            <img class="QX-2" src="../images/xx.png" />
+            <div style="margin:15px auto;text-align: center;">
+                <input placeholder="请输入imei" type="" name="" class="shuruk" id="equipment_imei" value="" />
+                <input type="text" placeholder="请输入卡号" name="" class="shuruk"  id="equipment_sim" value=""  />
+            </div>
+            <button class="Jia" style="margin-left:84px;margin-top: 10px;">添 加</button>
+        </div>
+
+        <!-- <div class="deposi" style="height: 240px;">
+            <img class="QX-2" src="../images/xx.png" />
+            <div style="margin:15px auto;text-align: center;">
+                <input placeholder="请输入imei" type="" name="" class="shuruk" id="equipment_imei" value="" />
+                <input type="text" placeholder="请输入卡号" name="" class="shuruk"  id="equipment_sim" value=""  />
+            </div>
+            <button class="Jia" style="margin-left:84px;margin-top: 10px;">添 加</button>
+        </div> -->
+        <!-- 修改弹出框 -->
+        <div class="deposi2" style="height: 300px;">
+            <img class="QX-2" src="../images/xx.png" />
+            <div style="margin: auto;text-align: center;">
+                <input placeholder="请输入imei" type="" name="" class="shuruk" id="eqimei" value="" />
+                <input placeholder="请输入使用者" type="" name="" class="shuruk" id="equser" value="" />
+                <input type="text" placeholder="请输入卡号" name="" class="shuruk"  id="eqsim" value=""  />
+            </div>
+            <button id="xiugai" class="Jiaxiugai" style="margin-left:84px;margin-top: 30px;" onclick="xiugaiFn(this)">修 改</button>
+        </div>
+
+        <div class="deposit">
+            <img class="QX-1" src="../images/xx.png" />
+            <div id="box" style="margin-top: 10%;">
+                <select name="sel1" id="sel1">
+                    <option value="year">年</option>
+                </select>
+                <select name="sel2" id="sel2">
+                <option value="month">月</option>
+                </select>
+                <select name="sel3" id="sel3">
+                <option value="day">日</option>
+                </select>
+                <span id="result"></span>
+            </div>
+            <button class="Jia2">添 加</button>
+        </div>
+    
+        <div class="Tan">
+            <div class="Rm">温馨提醒</div>
+            <div class="Dl">确定要删除么</div>
+            <button class="QX">取消</button>
+            <button class="SC" onclick="sc()">删除</button>
+        </div>
+        <div class="Tan1">
+            <div class="Rm">温馨提醒</div>
+            <div class="Dl">确定要解除绑定么</div>
+            <button class="QX">取消</button>
+            <button class="SC" onclick="jb()">解绑</button>
+        </div>
+        <div class="Tan2">
+            <div class="Rm">温馨提醒</div>
+            <div class="Dl">确定要开启设备么？</div>
+            <button class="QX">取消</button>
+            <button class="SC">确认</button>
+        </div>
+        <div class="Tan3">
+            <div class="Rm">温馨提醒</div>
+            <div class="Dl">确定要关闭设备么？</div>
+            <button class="QX">取消</button>
+            <button class="SC">确认</button>
+        </div>
+        <!-- <div class="shebeitishi">设备总数,已用总数</div> -->
+        <ul id="groupRule" class="first">
+            <!-- <li>
+                <div class="flex" show="0" onclick="showSecond(this)">
+                    <h2>
+                        <p style="float:left">A区县</p>
+                    </h2>
+                    <b class="right"><img class="img" src="../images/top.png" alt=""></b>
+                </div>
+                <ul  class="second">
+                    <li>
+                        <div class="flex" show="0" onclick="showThird(this)">
+                            <p style="float:left;">A医院</p>
+                            <b class="right"><img class="img" src="../images/top.png" alt=""></b>
+                        </div>
+                        <div class="third">
+                            <table class="audit-1" border="0" cellpadding="0" cellspacing="0" width="500">
+                                <!-- <tr>
+                                    <td>设备id</td>
+                                    <td>IMEI</td>
+                                    <td>SIM</td>
+                                    <td>使用者</td>
+                                    <td>创建时间</td>
+                                    <td>过期时间</td>
+                                    <td>剩余天数</td>
+                                    <td class="tdnone">状态</td>
+                                    <td class="tdnone">操作</td>
+                                </tr>
+                                <tr>
+                                    <td>12</td>
+                                    <td>12323343444454</td>
+                                    <td>121323</td>
+                                    <td>点点滴滴</td>
+                                    <td>123234344</td>
+                                    <td>123233434</td>
+                                    <td>12</td>
+                                    <td class="tdnone">状态</td>
+                                    <td class="tdnone">操作</td>
+                                </tr>     
+                                </table>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul> -->
+    </div>
+</body>
+</html>
+<script src="../js/jquery-3.1.1.min.js"></script>
+<script src='../js/call_info.js' type='text/javascript'></script>
+<script src="../laypage/laypage.js"></script>
+
+<script>
+        $(document).ready(function() {
+            getCityFn();
+		});
+        var access_token = sessionStorage.getItem('access-token');
+        function tableHTMLFn(hospital_id,dom) {
+            // access_token='g-a35-kN3V0FZeIwjT0jXsy-a-jMufXV';
+			var controller = 'wei/my-list-search?access-token='+access_token;
+            // var status=$("#zhuangtai").prop()
+            var params={
+                username:'',
+            	imei:'',
+            	sim:'',
+                hospital_id:hospital_id
+            }
+            callInfo.sendData(controller, params, 'POST', function(data) {
+                if (data.code == 10000) {
+                    var leng = data.data.pagedata.length
+                    var textArr1 = ['', '开启', '停用'];
+                    var html = '';
+                    html+='<tr>'
+                    html+='<td>设备id</td>'
+                    html+='<td>IMEI</td>'
+                    html+='<td>SIM</td>'
+                    html+='<td>使用者</td>'
+                    html+='<td>创建时间</td>'
+                    html+='<td>过期时间</td>'
+                    html+='<td>剩余天数</td>'
+                    html+='<td class="tdnone">状态</td>'
+                    html+='<td class="tdnone">操作</td>'
+                    html+='</tr>'
+                            for (var i = 0; i < leng; i++) {
+                                var data1 = data.data.pagedata[i];
+                                var time = new Date(data1.create_time * 1000).toLocaleDateString()
+                                if (data1.pass_time == null) {
+                                    data1.pass_time = '暂无'
+                                } else {
+                                    data1.pass_time = new Date(data1.pass_time * 1000).toLocaleDateString()
+                                }
+                                if (data1.number == null) {
+                                    data1.number = 0
+                                }
+                                if (data1.name == null) {
+                                    data1.name = '暂无'
+                                }
+                                if (data1.username == null) {
+                                    data1.username = '暂无'
+                                }
+                                html += '<tr>'
+                                html += '<td id="equipment_id' + i + '">' + data1.equipment_id + '</td>'
+                                html += '<td>' + data1.equipment_imei + '</td>'
+                                html += '<td>' + ((data1.sim==null)?' ':data1.sim) + '</td>'
+                                html += '<td>' + data1.username + '</td>'
+                                html += '<td>' + time + '</td>'
+                                html += '<td><div id="pass_time' + i + ' onclick="passTime(' + i + ')">' + data1.pass_time + '</div></td>'
+                                html += '<td>' + data1.number + '</td>'
+                                html += '<td class="tdnone">'
+                                html += '<label class="switch-btn">'
+                                if(data1.status==1){
+                                    html += '<input checked equipment_id="'+data1.equipment_id+'" name="'+data1.status+'" class="checked-switch" type="checkbox"onclick="ZhT(this,' + i + ')"/>'
+                                }else{
+                                    html += '<input equipment_id="'+data1.equipment_id+'" name="'+data1.status+'" class="checked-switch" type="checkbox"onclick="ZhT(this,' + i + ')"/>'
+                                }
+                                html += '<span class="text-switch"  data-yes="yes" data-no="no"></span>'
+                                html += '<span class="toggle-btn" ></span>'
+                                html += '</label>'
+                                html += '</td>'
+                                html += '<td class="tdnone"><img class="shan" title="修改" src="../images/xiugai.png" equipment_id="' + data1.equipment_id +'"  equipment_imei="'+data1.equipment_imei+'" sim="'+data1.sim+'" equipment_user="'+data1.username+'" onclick="change(this)" /> <img equipment_id="' + data1.equipment_id + '" title="删除"  onclick="shan(this)" class="shan" src="../images/shanchu.png" alt="" /><img style="margin-left:10px;" title="解绑"  equipment_id="' + data1.equipment_id + '" onclick="jiebang(this)" class="shan" src="../images/jiechubd.png" alt="" /></td>'
+                                html += '</tr>'      
+                            }
+                            $(dom).next().find('table').html(html);
+                            if($("#zhuangtai").prop("checked")){
+                                $(".tdnone").show();
+                            }else{
+                                $(".tdnone").hide();
+                            }
+                }
+            })
+        }
+
+
+        // 二级菜单显示或隐藏
+        function showSecond(dom){
+            var status = $(dom).attr('show');
+            var region_code=$(dom).attr("region_code")
+            getArea(region_code,dom)
+            if(status==0){
+                $(dom).attr('show',1);
+                $(dom).find(".right").css('transform','rotate(90deg)')
+                $(dom).find(".jiaimg").attr("src","../images/jianhao.png")
+                $(dom).siblings('.second').show(500);
+            }else if(status==1){
+                $(dom).siblings('.second').hide(500);
+                $(dom).attr('show',0);
+                $(dom).find(".right").css('transform','rotate(0deg)')
+                $(dom).find(".jiaimg").attr("src","../images/jiahao.png")
+            }
+        }
+
+        function showSearchSecond(dom){
+            var status = $(dom).attr('show');
+            var region_code=$(dom).attr("region_code")
+            // searchArea(,dom)
+            if(status==0){
+                $(dom).attr('show',1);
+                $(dom).find(".right").css('transform','rotate(90deg)')
+                $(dom).find(".jiaimg").attr("src","../images/jianhao.png")
+                $(dom).siblings('.second').show(500);
+            }else if(status==1){
+                $(dom).siblings('.second').hide(500);
+                $(dom).attr('show',0);
+                $(dom).find(".right").css('transform','rotate(0deg)')
+                $(dom).find(".jiaimg").attr("src","../images/jiahao.png")
+            }
+        }
+        function showSearchThird(dom){
+            var region_code=$(dom).attr('region_code');
+            // searchFn();
+            var status = $(dom).attr('show');
+            if(status==0){
+                $(dom).attr('show',1);
+                $(dom).find(".right").css('transform','rotate(90deg)')
+                $(dom).find(".jiaimg").attr("src","../images/jianhao.png")
+                $(dom).siblings('.third').show(500);
+            }else if(status==1){
+                $(dom).attr('show',0);
+                $(dom).find(".right").css('transform','rotate(0deg)')
+                $(dom).find(".jiaimg").attr("src","../images/jiahao.png")
+                $(dom).siblings('.third').hide(500);
+            }
+        }
+        // 三级菜单的显示或隐藏
+        function showThird(dom){
+            var region_code=$(dom).attr('region_code');
+            getHosipital(region_code,dom)
+            var status = $(dom).attr('show');
+            if(status==0){
+                $(dom).attr('show',1);
+                $(dom).find(".right").css('transform','rotate(90deg)')
+                $(dom).find(".jiaimg").attr("src","../images/jianhao.png")
+                $(dom).siblings('.third').show(500);
+            }else if(status==1){
+                $(dom).attr('show',0);
+                $(dom).find(".right").css('transform','rotate(0deg)')
+                $(dom).find(".jiaimg").attr("src","../images/jiahao.png")
+                $(dom).siblings('.third').hide(500);
+            }
+        }
+
+        // 三级菜单的显示或隐藏
+        function searchshowThird(dom){
+            var region_code=$(dom).attr('region_code');
+            // getHosipital(region_code,dom)
+            var status = $(dom).attr('show');
+            if(status==0){
+                $(dom).attr('show',1);
+                $(dom).find(".right").css('transform','rotate(90deg)')
+                $(dom).find(".jiaimg").attr("src","../images/jiahao.png")
+                $(dom).siblings('.third').show(500);
+            }else if(status==1){
+                $(dom).attr('show',0);
+                $(dom).find(".right").css('transform','rotate(0deg)')
+                $(dom).find(".jiaimg").attr("src","../images/jianhao.png")
+                $(dom).siblings('.third').hide(500);
+            }
+        }
+
+        function showfourth(dom){
+            var region_code=$(dom).attr('region_code');
+            var hospital_id=$(dom).attr('hospital_id');
+            var status = $(dom).attr('show');
+            tableHTMLFn(hospital_id,dom)            
+            if(status==0){
+                $(dom).attr('show',1);
+                $(dom).find(".right").css('transform','rotate(90deg)');
+                $(dom).find(".jiaimg").attr("src","../images/jianhao.png")
+                $(dom).next().show(500);
+                if($("#zhuangtai").prop("checked")){
+                    $(".tdnone").show();
+                }else{
+                    $(".tdnone").hide();
+                }
+            }else if(status==1){
+                $(dom).attr('show',0);
+                $(dom).find(".right").css('transform','rotate(0deg)')
+                $(dom).find(".jiaimg").attr("src","../images/jiahao.png")
+                $(dom).next().hide(500);
+            }            
+        }
+
+        function autoSecond(){
+        }    
+
+            //修改
+        function change(dom){
+			var equipment_id = $(dom).attr("equipment_id");
+			var equipment_imei = $(dom).attr("equipment_imei");
+			var sim = $(dom).attr("sim");
+			var equipment_user=$(dom).attr("equipment_user");
+            $(dom).attr("id","xiugaiId")
+			$(".zhezhao").css("height", $(document).height());
+			$(".zhezhao").css("width", $(document).width());
+			$('.zhezhao').show()
+			$('.deposi2').show()
+			$("#eqimei").val(equipment_imei)
+			$("#eqsim").val(sim)
+			$("#equser").val(equipment_user);
+			$("#xiugai").attr("equipment_id",equipment_id)
+        }
+
+        //修改请求数据
+        function xiugaiFn(dom){
+            var equipment_id=$("#xiugai").attr("equipment_id");
+            var equipment_imei=$("#eqimei").val();
+            var sim=$("#eqsim").val()
+            var equser=$("#equser").val();
+            // console.log(equipment_id,equipment_imei,sim)
+            // var access_token = sessionStorage.getItem('access-token');
+            // access_token='ybTBKJqMc9GzqFJAatQfPXz8SCK1YYc4'
+            var controller = 'wei/admin-update-equipment?access-token='+access_token;
+                console.log(equipment_imei)
+                var params={
+                    equipment_id:equipment_id,
+                    equipment_imei:equipment_imei,
+                    sim:sim,
+                    username:equser
+                }
+                callInfo.sendData(controller, params, 'POST', function(data) {
+                    if (data.code == 10000) {
+                        $('.zhezhao').hide()
+                        $('.deposi2').hide()
+                        if($("#xiugaiId")){
+                            var tdlist=$("#xiugaiId").parent().siblings();
+                            tdlist.eq(1).html(equipment_imei)
+                            tdlist.eq(2).html(sim)
+                            if($("#shiyong").prop("checked")){
+                                tdlist.eq(3).html(equser)
+                            }else{
+                                tdlist.eq(4).html(equser)
+                            }
+
+                            $("#xiugaiId").attr("equipment_imei",equipment_imei)
+                            $("#xiugaiId").attr("sim",sim)
+                            $("#xiugaiId").attr("equipment_user",equser)
+                            
+                        }
+                        $("#xiugaiId").attr("id",'');
+                        // window.location = "shebei2.html"
+                    }
+                })
+        }	
+        
+        //删除
+        var shan = function(dom) {
+                console.log(dom)
+				var equipment_id = $(dom).attr('equipment_id');
+				sessionStorage.setItem('equipment_id', equipment_id);
+                $(dom).attr("id","querenshan")
+				$(".Tan").show()
+				$(".zhezhao").css("height", $(document).height());
+				$(".zhezhao").css("width", $(document).width());
+				$(".zhezhao").show();
+        }
+        //删除
+		function sc() {
+			var equipment_id = sessionStorage.getItem('equipment_id');
+			var access_token = sessionStorage.getItem('access-token');
+			var controller = 'wei/del-equipment?access-token=' + access_token + '&equipment_id=' + equipment_id;
+            var dom=$("#querenshan");
+            callInfo.sendData(controller, {}, 'GET', function(data) {
+				if (data.code == 10000) {
+				    // window.location = "shebei.html"
+                    dom.parent().parent().remove();
+				}
+			})
+		}
+
+        var jb = function(){
+			var equipment_id = sessionStorage.getItem('equipment_id');
+			var access_token = sessionStorage.getItem('access-token');
+			var controller = 'wei/equipment-update?id='+equipment_id+'&access-token='+access_token
+			callInfo.sendData(controller, {}, 'GET', function(data) {
+				if (data.code == 10000) {
+					console.log(data)
+				    window.location = "shebei2.html"
+					
+				}
+			})
+		}
+        // 解除绑定
+		var jiebang = function(dom){
+			var equipment_id = $(dom).attr('equipment_id');
+			sessionStorage.setItem('equipment_id', equipment_id);
+			$(".Tan1").show()
+			$(".zhezhao").css("height", $(document).height());
+			$(".zhezhao").css("width", $(document).width());
+			$(".zhezhao").show();
+
+        }
+        
+        	//解除绑定弹框
+		$('.QX').click(function() {
+            if($("#querenshan")){
+                $("#querenshan").attr("id","")
+            }
+			$('.zhezhao').hide()
+			$(".Tan").hide()
+			$(".Tan1").hide()
+            $(".Tan2").hide();
+            $(".Tan3").hide();
+		})
+		$('.SC').click(function() {
+			$('.zhezhao').hide()
+			$(".Tan").hide()
+			$(".Tan1").hide()
+			$(".Tan2").hide()
+            $(".Tan3").hide();
+			$("#Zhi").remove();
+        })
+
+        //鼠标移入事件
+        function showtishiFn(dom){
+            $(dom).find(".shebeitishi").css("left",($(dom).width()+10)+"px")
+            $(dom).find(".shebeitishi").stop().show(500);
+        }
+        //鼠标离开事件
+        function displaytishiFn(dom){
+            $(dom).find(".shebeitishi").stop().hide(500);
+        }
+        //未使用
+        function wsyClickFn(){
+            $(".eqinput").find("option").eq(0).hide();
+            $(".eqinput").val("imei号")
+            $(".eqinput").find("option").eq(3).hide();
+
+            var html=""
+            html+='<div class="audit" id="wsytableID">'
+            html+='<table class="audit-1" cellpadding="0" cellspacing="0" width="500">'
+            html+='</table></div>'
+            html+='<div id="pagination"></div>'
+            $("#groupRule").html(html);
+            setTimeout(function(){
+                wsytableFn()
+            },300)
+        }
+        var pagex=0;
+        function wsytableFn(curr){
+            var num=curr||1;
+            var params={
+                imei:'',
+                sim:''
+            }
+            var controller = 'wei/give-equipment?access-token=' + access_token+"&page="+num;
+            callInfo.sendData(controller, params, 'POST', function(data) {
+                if (data.code == 10000) {
+                    var leng = data.data.pagedata.length
+                    pagex =data.data.query.countpage;//总页数
+                    // var textArr1 = ['', '开启', '停用'];
+                    var html = ''
+                    html += '<tr class="tr">'
+                    html += '<td>设备id</td>'
+                    html += '<td>imei </td>'
+                    html += '<td>SIM </td>'
+                    html += '<td>医院名称</td>'
+                    html += '<td>使用者</td>'
+                    html += '<td>所属区县</td>'
+                    html += '<td>创建时间</td>'
+                    html += '<td>过期时间</td>'
+                    html += '<td>剩余天数</td>'
+                    html += '<td class="tdnone">状态</td>'
+                    html += '<td class="tdnone">操作</td>'
+                    html += '</tr>'
+                    for (var i = 0; i < leng; i++) {
+                        var data1 = data.data.pagedata[i];
+                        var time = new Date(data1.create_time * 1000).toLocaleDateString()
+                        if (data1.pass_time == null) {
+                            data1.pass_time = '暂无'
+                        } else {
+                            data1.pass_time = new Date(data1.pass_time * 1000).toLocaleDateString()
+                        }
+                        //						var num = data1.number
+                        if (data1.number == null) {
+                            data1.number = 0
+                        }
+                        if (data1.name == null) {
+                            data1.name = '暂无'
+                        }
+                        if (data1.username == null) {
+                            data1.username = '暂无'
+                        }
+                        html += '<tr>'
+                        html += '<td id="equipment_id' + i + '">' + data1.equipment_id + '</td>'
+                        html += '<td>' + data1.equipment_imei + '</td>'
+                        html += '<td>' + ((data1.sim==null)?' ':data1.sim) + '</td>'
+                        html += '<td>' + data1.name + '</td>'
+                        html += '<td>' + data1.username + '</td>'
+                        html += '<td>' + ((data1.region == null) ? "" :data1.region) + '</td>'
+                        html += '<td>' + time + '</td>'
+                        html += '<td><div id="pass_time' + i + ' onclick="passTime(' + i + ')">' + data1.pass_time + '</div></td>'
+                        html += '<td>' + data1.number + '</td>'
+                        html += '<td class="tdnone">'
+                        html += '<label class="switch-btn">'
+                        if(data1.status==1){
+                            html += '<input checked equipment_id="'+data1.equipment_id+'" name="'+data1.status+'" class="checked-switch" type="checkbox"onclick="ZhT(this,' + i + ')"/>'
+                        }else{
+                            html += '<input equipment_id="'+data1.equipment_id+'" name="'+data1.status+'" class="checked-switch" type="checkbox"onclick="ZhT(this,' + i + ')"/>'
+                        }
+                        
+                        html += '<span class="text-switch"  data-yes="yes" data-no="no"></span>'
+                        html += '<span class="toggle-btn" ></span>'
+                        html += '</label>'
+                        html += '<td class="tdnone"><img class="shan" title="修改" src="../images/xiugai.png" equipment_id="' + data1.equipment_id +'"  equipment_imei="'+data1.equipment_imei+'" sim="'+data1.sim+'" equipment_user="'+data1.username+'" onclick="change(this)" /> <img equipment_id="' + data1.equipment_id + '"  title="删除" onclick="shan(this)" class="shan" src="../images/shanchu.png" alt="" /><img style="margin-left:10px;"  equipment_id="' + data1.equipment_id + '" onclick="jiebang(this)" class="shan" title="解绑" src="../images/jiechubd.png" alt="" /></td>'
+                        html += '</tr>'
+                    }
+                    $("#wsytableID>.audit-1").html(html);
+                    if($("#zhuangtai").prop("checked")){
+                        $(".tdnone").show();
+                    }else{
+                        $(".tdnone").hide();
+                    }
+                     laypage({
+                        cont: $('#pagination'), //容器。值支持id名、原生dom对象，jquery对象,
+                        pages:pagex, //总页数
+                        skip: true, //是否开启跳页
+                        skin: '#AF0000',
+                        groups: 3, //连续显示分页数
+                        curr:num,//当前页
+                        jump: function(page, first) {
+                            // console.log(page.curr, first);
+                            if (!first) {
+                                wsytableFn(page.curr);
+                            }
+                        }
+				    }); 
+                }
+            })
+
+
+        }
+        //已使用
+        $("#shiyong").click(function(){
+            $(".eqinput").find("option").eq(0).show();
+            $(".eqinput").val("医院名称")
+            $(".eqinput").find("option").eq(3).show();
+            getCityFn();
+            setTimeout(function(){
+                getArea("01",".second")
+            },300)
+        })
+
+
+        //搜索
+        function searchFn(dom){
+            var selectVal=$(".search .eqinput").val();
+            var radioVal=$('input:radio[name="used"]:checked').val();
+            var inputVal=$("#input").val();
+
+            //清空数据
+            $("#input").val('')
+            var hospital_name,imei,sim,username;
+            if(selectVal=='医院名称'){
+                hospital_name=inputVal
+            }if(selectVal=='imei号'){
+                imei=inputVal
+            }if(selectVal=='SIM号'){
+                sim=inputVal
+            }if(selectVal=='使用者'){
+                username=inputVal
+            }
+
+            if(username==undefined){
+                username=''
+            }if(imei==undefined){
+                imei=''
+            }if(sim==undefined){
+                sim=''
+            }if(hospital_name==undefined){
+                hospital_name=''
+            }
+
+            if($("#shiyong").prop("checked")){
+                var params4={
+                    username:username,
+                    imei:imei,
+                    sim:sim,
+                    status:'',
+                    hospital_name:hospital_name,
+                }
+                searchCityFn(params4)
+                var params1={
+                    username:username,
+                    imei:imei,
+                    sim:sim,
+                    status:'',
+                    hospital_name:hospital_name,
+                    region_code:'01'
+                }
+                setTimeout(function(){
+                    searchArea(params1)
+                },500)
+
+                setTimeout(function(){
+                    var flexList=$(".second>li>.flex");
+                    var region_code;
+                    
+                    for(var i=0;i<flexList.length;i++){
+                        region_code=flexList.eq(i).attr("region_code")
+                        var params2={
+                            username:username,
+                            imei:imei,
+                            sim:sim,
+                            status:'',
+                            hospital_name:hospital_name,
+                            region_code:region_code
+                        }   
+                            searchHospital(params2,i)
+                    }
+                    
+                },1000)
+                var params={
+                    username:username,
+                    imei:imei,
+                    sim:parseInt(sim),
+                    hospital_id:'',
+                }
+                setTimeout(function(){
+                    var controller = 'wei/my-list-search?access-token=' + access_token;
+                    callInfo.sendData(controller, params, 'POST', function(data) {
+                    if(data.code==10000){
+                        var data1=data.data.pagedata;
+                        console.log(data1)
+                        var leng=data1.length;
+                        var flexList=$(".third .flex")
+                        if(leng>0){
+                            for(var j=0;j<flexList.length;j++){
+                                if(flexList.eq(j).attr('hospital_id')==data1[0].hospital_id){
+                                    var html = '';
+                                    html+='<tr>'
+                                    html+='<td>设备id</td>'
+                                    html+='<td>IMEI</td>'
+                                    html+='<td>SIM</td>'
+                                    html+='<td>使用者</td>'
+                                    html+='<td>创建时间</td>'
+                                    html+='<td>过期时间</td>'
+                                    html+='<td>剩余天数</td>'
+                                    html+='<td class="tdnone">状态</td>'
+                                    html+='<td class="tdnone">操作</td>'
+                                    html+='</tr>'
+                                    for (var i = 0; i < leng; i++) {
+                                        var time = new Date(data1.create_time * 1000).toLocaleDateString()
+                                        if (data1.pass_time == null) {
+                                            data1.pass_time = '暂无'
+                                        } else {
+                                            data1.pass_time = new Date(data1.pass_time * 1000).toLocaleDateString()
+                                        }
+                                        if (data1.number == null) {
+                                            data1.number = 0
+                                        }
+                                        if (data1.name == null) {
+                                            data1.name = '暂无'
+                                        }
+                                        if (data1.username == null) {
+                                            data1.username = '暂无'
+                                        }
+                                        html += '<tr>'
+                                        html += '<td id="equipment_id' + i + '">' + data1[i].equipment_id + '</td>'
+                                        html += '<td>' + data1[i].equipment_imei + '</td>'
+                                        html += '<td>' + ((data1[i].sim==null)?' ':data1[i].sim) + '</td>'
+                                        html += '<td>' + data1[i].username + '</td>'
+                                        html += '<td>' + time + '</td>'
+                                        html += '<td><div id="pass_time' + i + ' onclick="passTime(' + i + ')">' + data1[i].pass_time + '</div></td>'
+                                        html += '<td>' + data1[i].number + '</td>'
+                                        html += '<td class="tdnone">'
+                                        html += '<label class="switch-btn">'
+                                        if(data1.status==1){
+                                            html += '<input checked equipment_id="'+data1[i].equipment_id+'" name="'+data1.status+'" class="checked-switch" type="checkbox"onclick="ZhT(this,' + i + ')"/>'
+                                        }else{
+                                            html += '<input equipment_id="'+data1[i].equipment_id+'" name="'+data1.status+'" class="checked-switch" type="checkbox"onclick="ZhT(this,' + i + ')"/>'
+                                        }
+                                        html += '<span class="text-switch"  data-yes="yes" data-no="no"></span>'
+                                        html += '<span class="toggle-btn" ></span>'
+                                        html += '</label>'
+                                        html += '</td>'
+                                        html += '<td class="tdnone"><img class="shan" src="../images/xiugai.png" equipment_id="' + data1[i].equipment_id +'"  equipment_imei="'+data1[i].equipment_imei+'" sim="'+data1[i].sim+'" equipment_user="'+data1[i].username+'" onclick="change(this)" /> <img equipment_id="' + data1[i].equipment_id + '"  onclick="shan(this)" class="shan" src="../images/shanchu.png" alt="" /><img style="margin-left:10px;"  equipment_id="' + data1[i].equipment_id + '" onclick="jiebang(this)" class="shan" src="../images/jiechubd.png" alt="" /></td>'
+                                        html += '</tr>'      
+                                        }
+                                        flexList.eq(j).next().find('table').html(html);
+                                        if($("#zhuangtai").prop("checked")){
+                                            $(".tdnone").show();
+                                        }else{
+                                            $(".tdnone").hide();
+                                        }
+                                    } 
+                            }
+                        }
+                     }    
+                   })
+                },1000)
+            }else{
+                var params3={
+                    imei:imei,
+                    sim:sim
+                }
+                var controller="wei/give-equipment?access-token="+access_token;
+                callInfo.sendData(controller,params3,"POST",function(data){
+                    if(data.code==10000){
+                        var leng=data.data.pagedata.length;
+                        var html = ''
+                        html += '<tr class="tr">'
+                        html += '<td>设备id</td>'
+                        html += '<td>imei </td>'
+                        html += '<td>SIM </td>'
+                        html += '<td>医院名称</td>'
+                        html += '<td>使用者</td>'
+                        html += '<td>所属区县</td>'
+                        html += '<td>创建时间</td>'
+                        html += '<td>过期时间</td>'
+                        html += '<td>剩余天数</td>'
+                        html += '<td class="tdnone">状态</td>'
+                        html += '<td class="tdnone">操作</td>'
+                        html += '</tr>'
+                        for (var i = 0; i < leng; i++) {
+                            var data1 = data.data.pagedata[i];
+                            var time = new Date(data1.create_time * 1000).toLocaleDateString()
+                            if (data1.pass_time == null) {
+                                data1.pass_time = '暂无'
+                            } else {
+                                data1.pass_time = new Date(data1.pass_time * 1000).toLocaleDateString()
+                            }
+                            //						var num = data1.number
+                            if (data1.number == null) {
+                                data1.number = 0
+                            }
+                            if (data1.name == null) {
+                                data1.name = '暂无'
+                            }
+                            if (data1.username == null) {
+                                data1.username = '暂无'
+                            }
+                            html += '<tr>'
+                            html += '<td id="equipment_id' + i + '">' + data1.equipment_id + '</td>'
+                            html += '<td>' + data1.equipment_imei + '</td>'
+                            html += '<td>' + ((data1.sim==null)?' ':data1.sim) + '</td>'
+                            html += '<td>' + data1.name + '</td>'
+                            html += '<td>' + data1.username + '</td>'
+                            html += '<td>' + ((data1.region == null) ? "" :data1.region) + '</td>'
+                            html += '<td>' + time + '</td>'
+                            html += '<td><div id="pass_time' + i + ' onclick="passTime(' + i + ')">' + data1.pass_time + '</div></td>'
+                            html += '<td>' + data1.number + '</td>'
+                            html += '<td class="tdnone">'
+                            html += '<label class="switch-btn">'
+                            if(data1.status==1){
+                                html += '<input checked equipment_id="'+data1.equipment_id+'" name="'+data1.status+'" class="checked-switch" type="checkbox"onclick="ZhT(this,' + i + ')"/>'
+                            }else{
+                                html += '<input equipment_id="'+data1.equipment_id+'" name="'+data1.status+'" class="checked-switch" type="checkbox"onclick="ZhT(this,' + i + ')"/>'
+                            }
+                            
+                            html += '<span class="text-switch"  data-yes="yes" data-no="no"></span>'
+                            html += '<span class="toggle-btn" ></span>'
+                            html += '</label>'
+                            html += '<td class="tdnone"><img class="shan" src="../images/xiugai.png" equipment_id="' + data1.equipment_id +'"  equipment_imei="'+data1.equipment_imei+'" sim="'+data1.sim+'" equipment_user="'+data1.username+'" onclick="change(this)" /> <img equipment_id="' + data1.equipment_id + '"  onclick="shan(this)" class="shan" src="../images/shanchu.png" alt="" /><img style="margin-left:10px;"  equipment_id="' + data1.equipment_id + '" onclick="jiebang(this)" class="shan" src="../images/jiechubd.png" alt="" /></td>'
+                            html += '</tr>'
+                        }
+                        $("#wsytableID>.audit-1").html(html);
+                        if($("#zhuangtai").prop("checked")){
+                            $(".tdnone").show();
+                        }else{
+                            $(".tdnone").hide();
+                        }
+
+                        $("#pagination").hide();
+                    }
+                })
+
+            }
+        }
+        function searchCityFn(params){
+            var controller = 'wei/city-equipment?access-token='+access_token;
+            callInfo.sendData(controller, params, 'POST', function(data) {
+                if(data.code==10000){
+                   var data1=data.data;
+                   var leng=data1.length;
+                   var html='';
+                   for(var i=0;i<leng;i++){
+                        html+='<li>'
+                        html+='<div class="flex" region_code="'+data1[i].region_code+'" show="1"  onclick="showSearchSecond(this)"><img   class="img jiaimg" onclick="showSecond" src="../images/jianhao.png">'
+                        html+='<h2><p onmouseover=showtishiFn(this) onmouseout="displaytishiFn(this)" style="float:left;position:relative;">'+data1[i].region_name+'('+data1[i].count+')<i class="shebeitishi">设备总数</i></p></h2>'
+                        html+='<b class="right"><img class="img" src="../images/top.png" alt=""></b>'
+                        html+='</div><ul class="second"></ul>'
+                        html+='</li>'
+                   }
+                   $("#groupRule").html(html);
+                }
+            })    
+        }    
+
+        function searchArea(params){
+            var controller = 'wei/town-equipment?access-token=' + access_token;
+            callInfo.sendData(controller, params, 'POST', function(data) {
+                if(data.code==10000){
+                    var data1=data.data;
+                    var leng=data1.length;
+                    var html='';
+                    for(var i=0;i<leng;i++){
+                        html+='<li>'
+                        html+='<div class="flex" region_code="'+data1[i].region_code+'" show="1"  onclick="showSearchThird(this)"><img  class="img jiaimg" src="../images/jianhao.png">'
+                        html+='<h2><p onmouseover=showtishiFn(this) onmouseout="displaytishiFn(this)" style="float:left;position:relative;">'+data1[i].region+'('+data1[i].count+')<i class="shebeitishi">设备总数</i></p></h2>'
+                        html+='<b class="right"><img class="img" src="../images/top.png" alt=""></b>'
+                        html+='</div><ul class="third searthird"></ul>'
+                        html+='</li>'
+                    }
+                    $("#groupRule>li>.second").eq(0).html(html);
+                }
+            })
+            
+        }
+        function searchHospital(params,count){
+            var controller = 'wei/hospital-equipment?access-token=' + access_token;
+            callInfo.sendData(controller, params, 'POST', function(data) {
+                var data1=data.data;
+                var leng=data1.length;
+                var html='';
+                for(var i=0;i<leng;i++ ){
+                    html+='<li>'
+                    html+='<lable class="switch-btn switch-btn1" hospital_id="'+data1[i].hospital_id+'" onclick="ztFn(this)">'
+                    html+='<input checked=""  name="'+data1[i].status+'" class="checked-switch" type="checkbox" ">'
+                    if(data1[i].status==='2'){
+                        html+='<span style="background:#5e92fe" class="text-switch" data-yes="yes" data-no="no"></span>'
+                        html+='<span style="left:18px;" class="toggle-btn"></span>'
+                    }else{
+                        html+='<span class="text-switch" data-yes="yes" data-no="no"></span>'
+                        html+='<span class="toggle-btn"></span>'
+                    }
+                    html+='</lable>'
+                    html+='<div class="flex" hospital_id="'+data1[i].hospital_id+'"  show="0" onclick="showfourth(this)">'
+                    html+='<p  style="float:left;position:relative;padding-left:20px;" onmouseover=showtishiFn(this) onmouseout="displaytishiFn(this)" ><img  class="img jiaimg" style="margin-right:10px;" src="../images/jiahao.png">'+data1[i].name+'('+data1[i].count+')<i class="shebeitishi">设备总数</i></p>'
+                    html+='<b class="right" style="float:right;"><img class="img" style="float:right;margin-top:10px;" src="../images/top.png" alt=""></b>'
+                    html+='</div>'
+                    html+='<div class="fourth">'
+                    html+='<table class="audit-1" border="0" cellpadding="0" cellspacing="0" width="500"></table></div>'
+                    html+='</li>'
+                }
+                $(".second>li .searthird").eq(count).html(html);
+                count++;
+            })
+        }
+
+         //点击状态切换
+        $("#zhuangtai").on("click",function(){
+			if($("#zhuangtai").prop("checked")){
+				$(".tdnone").show()
+			}else{
+				$(".tdnone").hide()
+			}
+		})
+
+        //添加设备
+		$('.Jia').click(function() {
+			var access_token = sessionStorage.getItem('access-token');
+			var controller = 'wei/edit-equipment?access-token=' + access_token;
+			var equipment_imei = $('#equipment_imei').val()
+			var equipment_sim=$("#equipment_sim").val();
+
+			var params = {
+				equipment_imei: equipment_imei,
+				sim:equipment_sim,
+			}
+			callInfo.sendData(controller, params, 'POST', function(data) {
+				if (data.code == 10000) {
+                     var html='';
+					$('.zhezhao').hide()
+					$('.deposi').hide()
+                    $("#weishiyong").prop("checked","true")
+                    wsyClickFn();
+
+                    $('#equipment_imei').val('')
+			        $("#equipment_sim").val('');
+                    
+				}
+			})
+		})
+		$('.zhezhao').click(function() {
+				$('.zhezhao').hide()
+				$('.deposi').hide()
+				$('.deposi2').hide()
+				$('.Tan1').hide()
+				$('.Tan2').hide()
+                $(".Tan3").hide();
+				$('.Tan').hide()
+				$('.deposit').hide()
+		})
+
+        var fun = function() {
+            $(".deposi").show()
+            $(".zhezhao").css("height", $(document).height());
+            $(".zhezhao").css("width", $(document).width());
+            $(".zhezhao").show();
+		}
+        //点击添加设备alert弹框
+		$(".tianjia").click(function() {
+			fun();
+		});   
+
+        $('.QX-2').click(function() {
+			$('.zhezhao').hide()
+			$(".deposi").hide()
+			$(".deposi2").hide()
+            $("#xiugaiId").attr("id","")
+		})
+		$('.QX-1').click(function() {
+			$('.zhezhao').hide()
+			$(".deposit").hide()
+        })
+        
+        //状态
+		function ZhT(dom,index) {
+			var id = $(dom).attr('equipment_id');
+			var status = $(dom).attr('name');
+			
+			var type = '';
+			if(status==2||status==0){
+				$(dom).attr('name','1');
+				type = '1';
+			}else if(status==1){
+				$(dom).attr('name','2');
+				type = '2';
+			}
+			
+			var equipment_id = $('#equipment_id' + index).html()
+			var controller = 'login/equipment-edit?equipment_id=' + equipment_id + '&status=' + type;
+			console.log(controller)
+			callInfo.sendData(controller, {}, 'GET', function(data) {
+				if (data.code == 10000) {
+					console.log(data)
+				}
+			})
+	    }
+        
+        function getCityFn(){
+            var params={
+                username:'',
+            	imei:'',
+            	sim:'',
+            	status:'',
+                hospital_name:'',
+            }
+            // access_token="6x2ckX3_nnNuAg_utV52mIZOHa-ofSIe"
+            var controller = 'wei/city-equipment?access-token='+access_token;
+            callInfo.sendData(controller, params, 'POST', function(data) {
+                if(data.code==10000){
+                   var data1=data.data;
+                   var leng=data1.length;
+                   var html='';
+                   for(var i=0;i<leng;i++){
+                        html+='<li>'
+                        html+='<div class="flex" region_code="'+data1[i].region_code+'" show="1"  onclick="showSecond(this)"><img  class="img jiaimg" src="../images/jianhao.png">'
+                        html+='<h2><p onmouseover=showtishiFn(this) onmouseout="displaytishiFn(this)" style="float:left;position:relative;">'+data1[i].region_name+'('+data1[i].count+')<i class="shebeitishi">设备总数</i></p></h2>'
+                        html+='<b class="right"><img class="img" src="../images/top.png" alt=""></b>'
+                        html+='</div><ul class="second"></ul>'
+                        html+='</li>'
+                   }
+                   $("#groupRule").html(html);
+
+                }
+            })    
+        }
+
+
+       
+       setTimeout(function(){
+        getArea('01','.second')
+       },500)
+       // 获取区县列表
+
+       var codeData;
+        function getArea(code,dom){
+            // var region_code=$("")
+            var params={
+                username:'',
+            	imei:'',
+            	sim:'',
+            	status:'',
+                hospital_name:'',
+                region_code:code,
+            }
+            var controller = 'wei/town-equipment?access-token='+access_token;
+            callInfo.sendData(controller, params, 'POST', function(data) {
+                if(data.code==10000){
+                    var html='';
+                    var leng=data.data.length;
+                    var data1=data.data;
+                    codeData=data1;
+                    for(var i=0;i<leng;i++){
+                        html+='<li>'
+                        html+='<div class="flex" region_code="'+data1[i].region_code+'" show="0"  onclick="showThird(this)"><img  class="img jiaimg" src="../images/jiahao.png">'
+                        html+='<h2><p onmouseover=showtishiFn(this) onmouseout="displaytishiFn(this)" style="float:left;position:relative;">'+data1[i].region+'('+data1[i].count+')<i class="shebeitishi">设备总数</i></p></h2>'
+                        html+='<b class="right"><img class="img" src="../images/top.png" alt=""></b>'
+                        html+='</div><ul class="third"></ul>'
+                        html+='</li>'
+                    }
+                     $("#groupRule .second").html(html);  
+                }
+            })
+        }
+
+        setTimeout(function(){
+            var thirdList=$(".second>li>.flex");
+            for(var i=0;i<codeData.length;i++){
+                getHosipital(codeData[i].region_code,thirdList[i])
+            }
+        },1000)
+        // 获取区县医院列表
+        function getHosipital(code,dom){
+            var params={
+                username:'',
+            	imei:'',
+            	sim:'',
+            	status:'',
+                hospital_name:'',
+                region_code:code,
+            }
+            var controller='wei/hospital-equipment?access-token='+access_token
+            callInfo.sendData(controller, params, 'POST', function(data) {
+                 console.log(data)
+                 if(data.code==10000){
+                    var html='';
+                    var leng=data.data.length;
+                    var data1=data.data;
+                    for(var i=0;i<leng;i++){
+                        html+='<li>'
+                        html+='<lable class="switch-btn switch-btn1" hospital_id="'+data1[i].hospital_id+'" onclick="ztFn(this)">'
+                        html+='<input checked=""  name="'+data1[i].status+'" class="checked-switch" type="checkbox" ">'
+                        if(data1[i].status==='2'){
+                            html+='<span style="background:#5e92fe" class="text-switch" data-yes="yes" data-no="no"></span>'
+                            html+='<span style="left:18px;" class="toggle-btn"></span>'
+                        }else{
+                            html+='<span class="text-switch" data-yes="yes" data-no="no"></span>'
+                            html+='<span class="toggle-btn"></span>'
+                        }
+                        html+='</lable>'
+                        html+='<div class="flex" hospital_id="'+data1[i].hospital_id+'" region_code="'+code+'" show="0" onclick="showfourth(this)">'
+                        html+='<p  style="float:left;position:relative;" onmouseover=showtishiFn(this) onmouseout="displaytishiFn(this)" ><img  class="img jiaimg" style="margin-right:10px;" src="../images/jiahao.png">'+data1[i].name+'('+data1[i].count+')<i class="shebeitishi">设备总数</i></p>'
+                        html+='<b class="right" style="float:right;"><img class="img" style="float:right;margin-top:10px;" src="../images/top.png" alt=""></b>'
+                        html+='</div>'
+                        html+='<div class="fourth">'
+                        html+='<table class="audit-1" border="0" cellpadding="0" cellspacing="0" width="500"></table></div>'
+                        html+='</li>'
+                    }
+                    $(dom).next().html(html);
+                    
+                } 
+            })
+            
+        }
+        
+         
+        function ztFn(dom){
+            console.log(dom)
+            var hospital_id = $(dom).attr('hospital_id');
+			var status = $(dom).find("input").attr('name');
+			if(status=='1'){
+                $(".Tan2").show();
+                $(".zhezhao").css("height", $(document).height());
+			    $(".zhezhao").css("width", $(document).width());
+                $(".zhezhao").show();
+
+                $(".Tan2 .SC").click(function(){
+                    console.log(1111)
+                    $(dom).find(".text-switch").css("background","#5e92fe")
+                    $(dom).find(".toggle-btn").css("left","18px")
+                    var controller = 'user/hospital-update?id='+hospital_id;
+                    callInfo.sendData(controller, {}, 'GET', function(data) {
+                        if (data.code == 10000) {
+                            $(dom).find("input").attr('name','2');
+                            hospital_id="";
+                        }
+                    })
+                })
+				
+			}else if(status=='2'){
+                console.log(222)
+                $(".Tan3").show();
+                $(".zhezhao").css("height", $(document).height());
+			    $(".zhezhao").css("width", $(document).width());
+                $(".zhezhao").show();
+
+                $(".Tan3 .SC").click(function(){
+                    $(dom).find(".text-switch").css("background","#ccc")
+                    $(dom).find(".toggle-btn").css("left","0px")
+                    var controller = 'user/hospital-update?id='+hospital_id;
+                    callInfo.sendData(controller, {}, 'GET', function(data) {
+                        if (data.code == 10000) {
+                            $(dom).find("input").attr('name','1');
+                            hospital_id="";
+                        }
+                    })
+                })
+
+                
+			}
+
+        } 
+</script>

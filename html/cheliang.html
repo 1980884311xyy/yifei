@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>车辆列表</title>
+		<link rel="stylesheet" type="text/css" href="../css/style.css"/>
+	</head>
+	<body>
+		<div class="container">
+			<div class="title-box">车辆列表<span class="tianjia" style="margin-left: 10px;"><a style="border-bottom: 1px solid #fff;">添加车辆</a></span></div>
+			<div class="zhezhao">
+
+			</div>
+			<div class="audit">
+				<table class="audit-1" border="0" cellpadding="0" cellspacing="0" width="500">
+					<tr>
+						<tr class="tr">
+					    <td>id</td>
+					    <td>车牌号</td>
+					    <td>驾驶人姓名</td>
+					    <td>设备ID</td>
+					    <td>重量</td>
+					    <td>数量</td>
+					    <td>创建时间</td>
+					    <td>操作</td>
+					</tr>
+					<!--<tr>
+					    <td></td>
+					    <td></td>
+					    <td></td>
+					    <td></td>
+					    <td></td>
+					</tr>-->
+				</table>
+				<div class="deposi" style="height:300px;">
+					<img class="QX-2" src="../images/xx.png" />
+						<div style="margin: auto;text-align: center;">
+						    <input placeholder="请输入车牌号" class="shuruk" id="car_number"/>
+                        </div>	
+                        <div style="margin: auto;text-align: center;">
+						    <input placeholder="请输入驾驶人姓名" class="shuruk"  id="username"/>
+                        </div>	
+	                    <div style="margin: auto;text-align: center;">
+					   		<input placeholder="请输入设备ID" class="shuruk"   type="" name="" id="imei"/>
+					   		<div onclick="yan()" style="float: right;line-height: 56px;margin-right: 40px;">验证</div>
+	                    </div>
+						
+		
+						<div class="Jia" onclick="jia()" style="margin-top: 30px;">添 加</div></td>
+				</div>
+				<div class="deposit">
+					<img class="QX-2" src="../images/xx.png" />
+						<div style="margin: auto;text-align: center;">
+						    <input placeholder="请输入车牌号" class="shuruk" id="car_number1"/>
+                        </div>	
+                        <div style="margin: auto;text-align: center;">
+						    <input placeholder="请输入驾驶人姓名" class="shuruk"  id="username1"/>
+                        </div>	
+						<div class="Jia1 Jia" style="margin-top: 30px;">添 加</div></td>
+				</div>
+				<div class="Tan">
+					<div class="Rm">温馨提醒</div>
+					<div class="Dl">确定要删除么</div>
+					<button class="QX">取消</button>
+					<button class="SC"  onclick="sc()">删除</button>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src='../js/jquery-3.1.1.min.js' type='text/javascript'></script>
+	<script src='../js/call_info.js' type='text/javascript'></script>
+	<script type="text/javascript">
+		//车辆列表
+         $(document).ready(function() {
+         	var access_token = sessionStorage.getItem('access-token');
+			var controller = 'wei/car-list?access-token=' + access_token;
+				callInfo.sendData(controller,{}, 'GET', function(data) {
+					if(data.code == 10000) {
+						var len = data.data.length
+						for(var i = 0; i < len; i++) {
+							var data1 = data.data[i];
+							var time = new Date(data1.create_time * 1000).toLocaleDateString()
+                            var html = '<tr><td>'+data1.id+'</td><td>'+data1.car_number+'</td><td>'+data1.username+'</td><td>'+data1.imei+'</td><td>'+data1.all_weight+'</td><td>'+data1.all_num+'</td><td>'+time+'</td><td><img id="'+data1.id+'" onclick="shan(this)" class="shan" title="删除" src="../images/shanchu.png" alt="" /><img onclick="xiu(this)" id="'+data1.id+'" title="修改" car_number="'+data1.car_number+'" username="'+data1.username+'"  class="xiu" src="../images/xiugai.png" alt="" /><img onclick="chaxun(this)" title="查询" car_number="'+data1.car_number+'" class="shan" src="../images/cha.png" alt="" /></td></tr>'
+							$('.audit-1').append(html)
+					    }
+					}
+				})
+         })
+         //查询
+         function chaxun(dom){
+         	var car_number = $(dom).attr('car_number');
+         	sessionStorage.setItem('car_number',car_number);
+         	console.log(car_number)
+         	window.location = "chaxun.html"
+         }
+         //验证设备id
+         function yan(){
+         	var imei=$("#imei").val();
+         	var params = {
+				imei:imei,
+			};
+			var access_token = sessionStorage.getItem('access-token');
+			var controller = 'wei/check-car?access-token=' + access_token;
+         	callInfo.sendData(controller,params, 'POST', function(data) {
+					if(data.code == 10000) {
+                       alert("成功");
+					}else{
+					   alert("无效的设备id")
+					}
+			})
+         }
+         //删除
+         function sc(){
+         	var id = sessionStorage.getItem('id');
+			console.log(id);
+			var access_token = sessionStorage.getItem('access-token');
+			var controller = 'wei/del-car?access-token=' + access_token + '&id='+id;
+         	callInfo.sendData(controller,{}, 'GET', function(data) {
+					if(data.code == 10000) {
+                      console.log(data)
+                      window.location = "cheliang.html"
+					}
+			})
+         }
+         var shan= function(dom){
+				var id = $(dom).attr('id');
+				console.log(id)
+				sessionStorage.setItem('id',id);
+				$(".Tan").show()
+				$(".zhezhao").css("height", $(document).height());
+				$(".zhezhao").css("width", $(document).width());
+				$(".zhezhao").show();
+			}
+         //修改
+         var xiu= function(dom){
+         	    var id = $(dom).attr('id');
+				var car_number = $(dom).attr('car_number');
+				var username = $(dom).attr('username');
+				$('#car_number1').val(car_number);
+				$('#username1').val(username);
+				console.log(car_number+'+'+username+'+'+id)
+				sessionStorage.setItem('id',id);
+				$(".deposit").show()
+				$(".zhezhao").css("height", $(document).height());
+				$(".zhezhao").css("width", $(document).width());
+				$(".zhezhao").show();
+			}
+         $('.Jia1').click(function() {
+				var car_number = $("#car_number1").val();
+				var username =  $("#username1").val();
+				var id = sessionStorage.getItem('id');
+				var params = {   
+					car_number:car_number,
+					username:username,id:id,
+				};
+				var access_token = sessionStorage.getItem('access-token');
+            	var controller = 'wei/update-car?access-token='+access_token;
+				callInfo.sendData(controller, params, 'POST', function(data) {
+					if(data.code == 10000) {
+						console.log(data)
+						$(".deposit").hide()
+						$(".zhezhao").hide()
+						window.location = "cheliang.html"
+					}
+					
+				})
+
+			})
+         //添加车辆
+         function jia(){
+         	var car_number=$("#car_number").val();
+         	var imei=$("#imei").val();
+         	var username=$('#username').val()
+         	var params = {
+         		car_number:car_number,
+				imei:imei,
+				username:username
+			};
+			 console.log(params)
+			var access_token = sessionStorage.getItem('access-token');
+			var controller = 'wei/edit-car?access-token=' + access_token;
+         	callInfo.sendData(controller,params, 'POST', function(data) {
+				if(data.code == 10000) {
+                    $(".deposi").hide()
+				    $(".zhezhao").hide()
+				    window.location = "cheliang.html"
+				}else{
+					alert("无效的设备id")
+				}
+			})
+         }
+         
+         //遮罩层
+            $('.QX').click(function() {
+				$('.zhezhao').hide()
+				$(".Tan").hide()
+			})
+			$('.SC').click(function() {
+				$('.zhezhao').hide()
+				$(".Tan").hide()
+				$("#Zhi").remove();
+			})
+			var fun = function() {
+				$(".deposi").show()
+				$(".zhezhao").css("height", $(document).height());
+				$(".zhezhao").css("width", $(document).width());
+				$(".zhezhao").show();
+			}
+			$(".tianjia").click(function() {
+				//			    $("#Zhi").remove(); // $(selector)通过选择器表示要删除的元素，remove()函数用以删除元素
+				fun();
+			});
+			//红色取消
+			$('.QX-2').click(function() {
+				$('.zhezhao').hide()
+				$(".deposi").hide()
+				$(".deposit").hide()
+				
+			})
+	</script>
+</html>

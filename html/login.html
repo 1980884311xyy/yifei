@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>医疗废物监控系统</title>
+        <link rel="stylesheet" type="text/css" href="../css/core.css">
+        <link rel="stylesheet" type="text/css" href="../css/login.css">
+    </head>
+    <body>
+        <div class="container">
+        	<p class="title">医疗废物监控系统</p>
+        	<div class="login-box">
+        		<div class="head">
+        			<p class="r circle1"></p>
+        			<p class="r circle2"></p>
+        			<p class="r circle3"></p>
+        		</div>
+        		<div style="clear:both"></div>
+        		<div>
+        			<div class="head-box">
+        				<image class="head-img" src="../images/head.png"/>
+        			</div>
+        			<div>
+        				<input id="name" class="user-name" type="text" placeholder="请输入账号"/>
+        				<input id="password" class="password" type="password" placeholder="请输入密码"/>
+        			</div>
+        		</div>
+        		<div onclick="login()"  class="login-btn">登 录</div>
+        	</div>	
+        </div>
+    </body>
+    <script type="text/javascript" src="../js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/call_info.js"></script>
+	<script type="text/javascript">
+        document.onkeydown =keylogin; 
+		
+		function keylogin(){
+			if(event.keyCode=='13'){
+				login();
+			}
+		}
+		
+    	function login(){
+            username = $("#name").val()
+            passwore = $("#password").val()
+    		var params = {
+        		username:username,
+				password:passwore,
+        	}
+            callInfo.sendData('login/admin-login',params,'POST',function(data){
+			   if(data.code==10000){
+			   		sessionStorage.setItem('userName',username);
+			   		sessionStorage.setItem('access-token',data.data.access_token);
+			   		window.location.href = '../index.html';
+			   		console.log(data);
+			   }
+			})  
+    	}
+    </script>
+
+    
+</html>

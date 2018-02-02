@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>统计详情</title>
+		<link rel="stylesheet" href="../css/core.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<style type="text/css">
+			body{
+				background: #F0F0F0;
+			}
+			.title{
+				height: 40px;
+				line-height: 40px;
+				font-size: 16px;
+				text-align: center;
+			}
+			.detail div{
+				line-height: 24px;
+			}
+			#start,#end{
+				float: left;
+				display: inline-block;
+				width:150px;
+				height:24px;
+				line-height: 24px;
+				background:#fff;
+				border:1px solid #ccc;
+				padding:2px 5px;
+				border-radius: 2px;
+				background: #fff;
+			}
+			.name-text{
+				float: left;
+				height:24px;
+				line-height: 24px;
+				margin-left: 10px;
+			}
+			.layui-inline{
+				height: 24px;
+				margin-top: 4px;
+			}
+			.type-box{
+				display: flex;
+				background: #fff;
+				margin-bottom: 10px;
+			}
+			.type-item,.active{
+				flex:1;
+				text-align: center;
+				line-height: 30px;
+			}
+			.type-item{
+				border-bottom: 4px solid transparent;
+			}
+			.active{
+				border-bottom: 4px solid #00BFFF;
+				color: #00BFFF;
+			}
+			.date-line{
+				display: flex;
+				margin-bottom: 10px;
+				align-items:center;
+			}
+			.search{
+				width: 50px;
+				height: 50px;
+				margin:3px 0 0 20px;
+				line-height: 50px;
+				text-align: center;
+				border-radius: 3px;
+				background: #00BFFF;
+				color:#fff;
+			}
+			.container{
+	position:relative;
+	min-height: 520px;
+	margin: 20px;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	padding-bottom: 50px;
+	box-shadow: 0px 2px 2px #ccc;
+	background: #fff;
+	border-radius: 5px;
+}
+	.title-box{
+	height: 32px;
+	line-height: 32px;
+	padding-left: 20px;
+	background-color: #373D41;
+	color: #fff;
+	font-weight:bold;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="title-box">统计详情<span onclick="javascript :history.back(-1);" style="margin-right: 10px;float: right;font-size: 20px;">×</span></div>
+			<!-- <div class="type-box">
+				<div onclick="choseType(this,0)" class="active">全部</div>
+		    	<div onclick="choseType(this,1)" class="type-item">感染性</div>
+		    	<div onclick="choseType(this,2)" class="type-item">损伤性</div>
+		    	<div onclick="choseType(this,3)" class="type-item">病理性</div>
+		    	<div onclick="choseType(this,4)" class="type-item">非医性</div>
+		    </div> -->
+		    <div class="date-line">
+		    	<div class="time-item">
+			    	<div class="layui-inline">
+				      	<span class="name-text">开始时间：</span>
+				        <span id="start"></span>
+				    </div>
+				    <div class="layui-inline">
+				      	<span class="name-text">结束时间：</span>
+				        <span id="end"></span>
+				    </div>
+			    </div>
+			    <div class="search" onclick="search()">搜索</div>
+		    </div>
+		    <div style="background:#fff">
+		    	<div id="main"></div>
+		    </div>
+		</div>
+		<script src="../js/jquery-3.1.1.min.js"></script>
+		<script src="../js/echarts.common.min.js" type="text/javascript"></script>
+		<script src="../laydate/laydate.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			var type = 0;
+			var startTime = '';
+			var endTime = '';
+			var status = 'all';
+			var list = [0,0,0,0];
+			var totalList = [];
+			laydate({ 
+				elem: '#start', 
+				event: 'click', //响应事件。如果没有传入event，则按照默认的click 
+				format: '', // 分隔符可以任意定义，该例子表示只显示年月 
+				festival: true, //显示节日 
+				istime: false, //显示时间选项 
+				choose: function(datas){ //选择日期完毕的回调 
+					var time = new Date(datas);
+					var seconds = time.getTime();//毫秒数
+					startTime = seconds/1000;
+				} 
+			}); 
+			laydate({ 
+				elem: '#end', 
+				event: 'click', //响应事件。如果没有传入event，则按照默认的click 
+				format: '', // 分隔符可以任意定义，该例子表示只显示年月 
+				festival: true, //显示节日 
+				istime: false, //显示时间选项 
+				choose: function(datas){ //选择日期完毕的回调 
+				   	var time = new Date(datas);
+					var seconds = time.getTime();//毫秒数
+					endTime = seconds/1000;
+				} 
+			});
+    		$(document).ready(function() {
+    			type = sessionStorage.getItem('detailType');
+				var json = JSON.parse(sessionStorage.getItem('typeData'));
+				list[0] = json.one;
+				list[1] = json.two;
+				list[2] = json.three;
+				list[3] = json.four;
+				totalList[0] = json.one;
+				totalList[1] = json.two;
+				totalList[2] = json.three;
+				totalList[3] = json.four;
+    			renderList();
+			});
+			// 渲染柱状图
+			function renderList(){
+				var width = document.body.clientWidth;
+    			$('#main').css('width','500px');
+    			$('#main').css('height','500px');
+    			$('#main').css('background-color','#fff');
+    			var myChart = echarts.init(document.getElementById('main'));
+    			var option = {
+					title : {
+				        subtext: '重量(kg)',
+				        top:'20'
+				    },
+					color: ['#FA7462', '#F2F262', '#6F89FC', '#3BE534'],
+				    tooltip: {
+				        trigger: 'axis',
+				        axisPointer: {
+				            type: 'shadow'
+				        }
+				    },
+				    legend: {
+				        data: ['感染性','损伤性','病理性','非医性']
+				    },
+				    toolbox: {
+				        show: true,
+				        orient: 'vertical',
+				        left: 'right',
+				        top: 'center',
+				        // feature: {
+				        //     mark: {show: true},
+				        //     dataView: {show: true, readOnly: false},
+				        //     magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+				        //     restore: {show: true},
+				        //     saveAsImage: {show: true}
+				        // }
+				    },
+				    calculable: true,
+				    xAxis: [
+				        {
+				            type: 'category',
+				            axisTick: {show: false},
+				            data: ['医废重量']
+				        }
+				    ],
+				    yAxis: [
+				        {
+				            type: 'value'
+				        }
+				    ],
+				    series: [
+				        {
+				            name: '感染性',
+				            type: 'bar',
+				            barGap: 0,
+				            // label: labelOption,
+				            data: [list[0]]
+				        },
+				        {
+				            name: '损伤性',
+				            type: 'bar',
+				            // label: labelOption,
+				            data: [list[1]]
+				        },
+				        {
+				            name: '病理性',
+				            type: 'bar',
+				            // label: labelOption,
+				            data: [list[2]]
+				        },
+				        {
+				            name: '非医性',
+				            type: 'bar',
+				            // label: labelOption,
+				            data: [list[3]]
+				        }
+				    ]
+				};
+
+
+				myChart.setOption(option);
+			}
+			
+
+			// // 切换tab标签
+			// function choseType(dom,index){
+			// 	$('.type-box div').attr('class','type-item');
+			// 	$(dom).attr('class','active');
+			// 	type=index;
+			// 	search();
+			// }
+			// 搜索
+			function search(){
+				// start_time=1505879505&end_time=1506364509&region_code=1 
+					if(startTime==''||endTime==''){
+						list = totalList;
+						renderList();
+						return;
+					}
+					var obj = {};
+					obj.type = type;
+					obj.start_time = startTime;
+					obj.end_time = endTime;
+					if(type==2||type==3){
+						obj.region_code = sessionStorage.getItem('region_code');
+						console.log(obj.region_code)
+					}else if(type==4){
+						obj.hospital_id = sessionStorage.getItem('hospitalId');
+						obj.id = sessionStorage.getItem('keshiId');
+					}
+					console.log(obj)
+					$.ajax({
+						url: 'http://ws.520m.com.cn/api/login/twon-map?',		
+				 　 	data:obj,
+				 　 	type: 'GET',
+				 　 	dataType:'json',
+				 　 	success:function(data){
+					 		console.log(data);
+					 		list[0] = data.data.one;
+							list[1] = data.data.two;
+							list[2] = data.data.three;
+							list[3] = data.data.four;
+							renderList();
+						},
+					 　 error:function(err){
+					　　	console.log(err);
+						}
+					})
+				}
+
+		</script>
+	</body>
+
+</html>

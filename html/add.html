@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>企业监控</title>
+		<link rel="stylesheet" type="text/css" href="../css/style.css" />
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="title-box">添加账号</div>
+			<div>
+				<div style="margin: auto;text-align: center;">
+				    <input placeholder="请输入账号" class="shuruk" id="phone"/>
+                </div>	
+                <div style="margin: auto;text-align: center;">
+					<input placeholder="请输入密码" class="shuruk" type="" name="" id="password"/>
+	            </div>
+	            <div style="margin: auto;text-align: center;">
+					<input placeholder="请输入重复密码" class="shuruk" type="" name="" id="re_password"/>
+	            </div>
+	            <div style="margin: auto;text-align: center;">
+					<input placeholder="请输入姓名" class="shuruk" type="" name="" id="username"/>
+	            </div>
+	            <div style="margin: auto;text-align: center;">
+					<input placeholder="请输入手机号" class="shuruk" type="" name="" id="tel"/>
+	            </div>
+	            <!--<div style="margin: auto;text-align: center;">
+					<input placeholder="请输入电话" class="shuruk" type="" name="" id="imei"/>
+	            </div>-->
+			    <div class="Jia" onclick="jia()" style="margin-top: 30px;">添 加</div></td>
+
+		    </div>
+		</div>
+	</body>
+	<script src='../js/jquery-3.1.1.min.js' type='text/javascript'></script>
+	<script type="text/javascript" src="../js/call_info.js"></script>
+	<script type="text/javascript">
+		function jia(){
+            phone = $("#phone").val()
+            passwordq = $("#password").val()
+            re_password = $("#re_password").val()
+            username = $("#username").val()
+            tel = $("#tel").val()
+    		var params = {
+        		phone:phone,
+				password:passwordq,
+				re_password:re_password,
+				username:username,
+				tel:tel
+        }
+            callInfo.sendData('register',params,'POST',function(data){
+			   if(data.code==10000){
+			   		console.log(data);
+			   		window.location = "add.html"
+			   }
+			})  
+    	}
+	</script>
+
+</html>

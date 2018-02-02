@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>添加医院科室列表</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/tree.css" />
+    <link rel="stylesheet" href="../css/core.css" />
+    
+</head>
+<style>
+    .audit{ margin:0; }
+    .first>li>.flex{padding-left:35px;}    
+    p.data-detail{
+        border:0;
+    }
+    p.data-detail>button{border:0;background: #00BFFF;padding:3px 5px;border-radius: 5px;color:white;margin-right:10px;}
+</style>
+<body>
+    <div class="container">
+        <div class="title-box" style="position:relative;">科室列表<span class="tianjia" style="margin-left: 10px;"><a style="border-bottom: 1px solid #fff;color:white;" onclick="tijia()">添加科室</a></span> <span style="margin-left: 30%;font-size: 16px;" id="hosname"></span>
+            <span  onclick="javascript :history.back(-1);" style="margin-right: 10px;float: right;font-size: 20px;cursor:pointer;">×</span></div>
+        <div class="zhezhao"></div>
+        <div class="deposi">
+            <img class="QX-2" src="../images/xx.png" />
+            <div style="margin: auto;text-align: center;">
+                <input placeholder="请输入科室名" class="shuruk" id="name1" />
+            </div>
+            <div class="Jia1 Jia" onclick="addKeshiFn()" style="margin-top: 30px;">添 加</div>
+        </div>    
+        <div class="Tan">
+            <div class="Rm">温馨提醒</div>
+            <div class="Dl">确定要删除么</div>
+            <button class="QX">取消</button>
+            <button class="SC" >删除</button>
+        </div>
+        
+        <div class="audit">
+            <ul id="groupRule" class="first">
+
+            </ul>            
+        </div>
+    </div>
+</body>
+<script src="../js/jquery-3.1.1.min.js"></script>
+<script src='../js/call_info.js' type='text/javascript'></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        var hosname=sessionStorage.getItem("hosname");
+        $("#hosname").html(hosname)
+        getDepartment()
+    })
+    function tijia(){
+        $(".deposi").show()
+        $(".zhezhao").css("height", $(document).height());
+        $(".zhezhao").css("width", $(document).width());
+        $(".zhezhao").show();
+    }
+    // 获取科室列表
+    function getDepartment(){
+        var id=sessionStorage.getItem("company_id")
+        var obj = {};
+        obj.companyid = id;
+        $.ajax({
+            url: 'http://ws.520m.com.cn/api/login/department-list?',		
+        　 	data:obj,
+        　 	type: 'GET',
+        　 	dataType:'json',
+        　 	success:function(data){
+                console.log(data);
+                if(data.code==10000){
+                    var list = data.data.request;
+                    var len = list.length;
+                    var html = '';
+                    for(var i=0;i<len;i++){
+                        var date = new Date(list[i].create_time*1000);
+                        var timeText = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+                        html+='<li>';
+                        html+='	<div class="flex">';
+                        html+='		<p num="'+list[i].num+'" hospital_id="'+list[i].hospital_id+'"  class="title-name">'+list[i].name+'（'+list[i].count+'）'+'</p>';
+                        html+='		<p class="data-detail"  hospital_id="'+list[i].hospital_id+'" ><button dataId="'+list[i].id+'" onclick="alertTan(this)">删除</button></p>';
+                        html+='	</div>';
+                        html+='</li>';
+                    }
+                    $('#groupRule').html(html);
+                }
+                
+            },
+            　 error:function(err){
+        　　	console.log(err);
+            }
+        });
+    }
+    //添加科室
+    function addKeshiFn(){
+        var companyid=sessionStorage.getItem("company_id")
+        var text=$("#name1").val();
+        // var id=parseInt(Math.random()*(2000-400));
+        // console.log(id)
+        var obj = {};
+        obj.company_id = companyid;
+        obj.name = text;
+        // obj.id = id;
+        $.ajax({
+            url:'http://ws.520m.com.cn/api/login/add-department?',	
+        　 	data:obj,
+        　 	type: 'GET',
+        　 	dataType:'json',
+        　 	success:function(data){
+                console.log(data);
+                $('#input').val('');
+                if(data.code==10000){
+                    $('.deposi').hide()
+                    $(".zhezhao").hide()
+                    getDepartment()
+                }
+            },
+            　 error:function(err){
+        　　	console.log(err);
+            }
+        });
+    }
+
+    // 删除科室
+    function deleteKeshi(dom){
+        // var id = $(dom).attr('dataId');
+        var id=sessionStorage.getItem("dataid");
+        var obj = {};
+        obj.id = id;
+        $.ajax({
+            url:'http://ws.520m.com.cn/api/login/del-department?',	
+        　 	data:obj,
+        　 	type: 'GET',
+        　 	dataType:'json',
+        　 	success:function(data){
+                console.log(data);
+                if(data.code==10000){
+                    getDepartment();
+                }
+            },
+            　 error:function(err){
+        　　	    console.log(err);
+            }
+        });
+    }
+
+   
+
+    function alertTan(dom){
+        sessionStorage.setItem("dataid",$(dom).attr("dataid"))
+        $(".Tan").show()
+        $(".zhezhao").css("height", $(document).height());
+        $(".zhezhao").css("width", $(document).width());
+        $(".zhezhao").show();
+    }
+    $('.QX').click(function() {
+			$('.zhezhao').hide()
+			$(".Tan").hide()
+		})
+    $('.SC').click(function() {
+        $('.zhezhao').hide()
+        $(".Tan").hide()
+        // $("#Zhi").remove();
+        deleteKeshi();
+    })
+    $(".zhezhao").click(function(){
+        $(".deposi").hide()
+        $(".zhezhao").hide();
+        $(".Tan").hide();
+    })
+    //红色取消
+    $('.QX-2').click(function() {
+        $('.zhezhao').hide()
+        $(".deposi").hide()
+        $(".deposit").hide()
+
+    })
+   
+
+</script>
+</html>

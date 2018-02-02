@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>医废统计</title>
+		<link rel="stylesheet" href="../css/core.css" />
+		<link rel="stylesheet" type="text/css" href="../css/dropload.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<style type="text/css">
+			body{
+				background: #F0F0F0;
+			}
+			.head{
+				line-height: 50px;
+				background: #00BFFF;
+				text-align: center;
+				color: #fff;
+				font-size: 16px;
+			}
+			.list-box li{
+				padding: 3px 10px;
+				margin-top: 1px;
+				background: #fff;
+			}
+			.detail div{
+				line-height: 24px;
+			}
+			#start,#end{
+				float: left;
+				display: inline-block;
+				width:150px;
+				height:24px;
+				line-height: 24px;
+				background:#fff;
+				border:1px solid #ccc;
+				padding:2px 5px;
+				border-radius: 2px;
+			}
+			.name-text{
+				float: left;
+				height:24px;
+				line-height: 24px;
+				margin-left: 10px;
+			}
+			.layui-inline{
+				height: 24px;
+				margin-top: 4px;
+			}
+			.type-box{
+				display: flex;
+				background: #fff;
+				margin-bottom: 10px;
+			}
+			.type-item,.active{
+				flex:1;
+				text-align: center;
+				line-height: 30px;
+				cursor: pointer;
+			}
+			.type-item{
+				border-bottom: 4px solid transparent;
+			}
+			.active{
+				border-bottom: 4px solid #00BFFF;
+				color: #00BFFF;
+			}
+			.date-line{
+				display: flex;
+				margin-bottom: 10px;
+				align-items:center;
+			}
+			.search{
+				width: 50px;
+				height: 50px;
+				margin:3px 0 0 20px;
+				line-height: 50px;
+				text-align: center;
+				border-radius: 3px;
+				background: #00BFFF;
+				color:#fff;
+				cursor: pointer;
+			}
+			.container{
+	position:relative;
+	min-height: 520px;
+	margin: 20px;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	padding-bottom: 50px;
+	box-shadow: 0px 2px 2px #ccc;
+	background: #fff;
+	border-radius: 5px;
+}
+	.title-box{
+	height: 32px;
+	line-height: 32px;
+	padding-left: 20px;
+	background-color: #373D41;
+	color: #fff;
+	font-weight:bold;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="title-box">科室详情<span onclick="javascript :history.back(-1);" style="margin-right: 10px;float: right;font-size: 20px;">×</span></div>
+		    <div class="type-box">
+		    	<div onclick="choseType(this,0)" class="active">全部</div>
+		    	<div onclick="choseType(this,1)" class="type-item">感染性</div>
+		    	<div onclick="choseType(this,2)" class="type-item">损伤性</div>
+		    	<div onclick="choseType(this,3)" class="type-item">病理性</div>
+		    	<div onclick="choseType(this,4)" class="type-item">化学性</div>
+		    	<div onclick="choseType(this,5)" class="type-item">药物性</div>
+				
+			</div>
+		    <div class="date-line">
+		    	<div class="time-item">
+			    	<div class="layui-inline">
+				      	<span class="name-text">开始时间：</span>
+				        <span id="start"></span>
+				    </div>
+				    <div class="layui-inline">
+				      	<span class="name-text">结束时间：</span>
+				        <span id="end"></span>
+				    </div>
+			    </div>
+			    <div class="search" onclick="search()">搜索</div>
+		    </div>
+		    
+		    
+			<ul class="list-box">
+				<!-- <li>
+					<div show="0" class="detail">
+						<div>废物件数：</div>
+						<div>废物重量：</div>
+						<div>创建时间：</div>
+					</div>
+				</li> -->
+			</ul>
+			
+		</div>
+		<script src="../js/jquery-3.1.1.min.js"></script>
+		<script src="../laydate/laydate.js" type="text/javascript"></script>
+		<script src="../js/dropload.min.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			var type = 0;
+			var page = 1;
+			var arr = [];
+			var arr1=[];
+			var startTime = '';
+			var endTime = '';
+			var status = 'all';
+    		$(document).ready(function() {
+    			// renderData()
+    			loadData();
+			});
+			// 进来时调用接口
+			function renderData(){
+				var hospital_id = sessionStorage.getItem('hospitalId');
+				var num = sessionStorage.getItem('num');
+				var obj = {};
+				obj.hospital_id = hospital_id;
+				obj.num = num;
+				obj.page = page;
+				$.ajax({
+					url: 'http://ws.520m.com.cn/api/login/material-list?',		
+			 　 	data:obj,
+			 　 	type: 'GET',
+			 　 	dataType:'json',
+			 　 	success:function(data){
+				 		console.log(data);
+				 		var list = data.data.pagedata;
+				 		var len = list.length;
+				 		var html = '';
+				 		for(var i=0;i<len;i++){
+				 			var date = '未填写';
+				 			if(list[i].create_time){
+				 				var time = new Date(list[i].create_time*1000);
+				 				date = time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate();
+				 			}
+				 			html+='<li>';
+							html+='	<div show="0" class="detail">';
+							html+='		<div>废物重量(kg)：'+list[i].all_wiget+'</div>';
+							html+='		<div>创建时间：'+date+'</div>';
+							html+='	</div>';
+							html+='</li>';
+				 		}
+				 		$('.list-box').html(html)
+					},
+				 　 error:function(err){
+				　　	console.log(err);
+					}
+				})
+			}
+			laydate({ 
+				elem: '#start', 
+				event: 'click', //响应事件。如果没有传入event，则按照默认的click 
+				format: '', // 分隔符可以任意定义，该例子表示只显示年月 
+				festival: true, //显示节日 
+				istime: false, //显示时间选项 
+				choose: function(datas){ //选择日期完毕的回调 
+					var time = new Date(datas);
+					var seconds = time.getTime();//毫秒数
+					startTime = seconds/1000;
+				} 
+			}); 
+			laydate({ 
+				elem: '#end', 
+				event: 'click', //响应事件。如果没有传入event，则按照默认的click 
+				format: '', // 分隔符可以任意定义，该例子表示只显示年月 
+				festival: true, //显示节日 
+				istime: false, //显示时间选项 
+				choose: function(datas){ //选择日期完毕的回调 
+				   	var time = new Date(datas);
+					var seconds = time.getTime();//毫秒数
+					endTime = seconds/1000;
+				} 
+			});
+			// 切换tab标签
+			function choseType(dom,index){
+				$('.type-box div').attr('class','type-item');
+				$(dom).attr('class','active');
+				page = 1;
+				if(index==0){
+					status = 'all';
+					type = index;
+					arr=[];
+				}else{
+					type = index;
+					status = 'search';
+					arr1=[];
+				}
+				loadData(index);
+			}
+			// 搜索按钮
+			function search(){
+				page = 1;
+				status = 'search';
+				loadData();
+			}
+
+			function loadData(){
+				$('.list-box').dropload({
+	            	// 滑动区域
+		            scrollArea: window,
+		            // 定义下方样式
+		            domDown: {
+		                domClass: "dropload-down",
+		                domRefresh: '<div class="dropload-refresh">↑上拉加载更多</div>',
+		                domLoad: '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
+		                domNoData: '<div class="dropload-noData">暂无数据</div>'
+		            },
+		            // 触发dropload的最小滑动距离
+		            distance: 20,
+		            // 提前加载距离
+		            threshold: 50,
+		            loadDownFn: function(me){
+		            	var hospital_id = sessionStorage.getItem('hospitalId');
+						var num = sessionStorage.getItem('num');
+						if(status == 'all'){
+							if(page==1){
+								$('.list-box').html('');
+							}
+							var obj = {};
+							obj.hospital_id = hospital_id;
+							obj.num = num;
+							obj.page = page;
+							$.ajax({
+							 url: 'http://ws.520m.com.cn/api/login/material-list?',		
+						 　 	data:obj,
+						 　 	type: 'GET',
+						 　 	dataType:'json',
+						 　 	success:function(data){
+									 var list = data.data.pagedata;
+									 var newList = arr.concat(list);
+									 arr=newList;
+									 console.log(newList)
+							 		var len = list.length;
+									var newLen = newList.length;
+							 		var html = '';
+							 		if(len==0){
+							 			$(".dropload-down").hide();
+							 		}else{
+							 			$(".dropload-load").show();
+							 			for(var i=0;i<newLen;i++){
+								 			var date = '未填写';
+								 			if(newList[i].create_time){
+								 				var time = new Date(newList[i].create_time*1000);
+								 				date = time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate();
+								 			}
+								 			html+='<li>';
+											html+='	<div show="0" class="detail">';
+											html+='		<div>废物重量(kg)：'+newList[i].all_wiget+'</div>';
+											html+='		<div>创建时间：'+date+'</div>';
+											html+='	</div>';
+											html+='</li>';
+								 		}
+										 page+=1;
+								 		 me.lock();
+										 me.resetload();
+										 $('.list-box').html(html);
+							 		}
+								},
+							 　 error:function(err){
+							　　	console.log(err);
+									$(".dropload-down").hide();
+							 		me.resetload();
+								}
+							})
+						}else if(status=='search'){
+							if(type==0){
+								$(".dropload-down").hide();
+								return;
+							}
+							if(page==1){
+								$('.list-box').html('');
+							}
+							var obj = {};
+							obj.hospital_id = hospital_id;
+							obj.num = num;
+							obj.page = page;
+							obj.start_time = startTime;
+							obj.end_time = endTime;
+							obj.type = type;
+							$.ajax({
+							url: 'http://ws.520m.com.cn/api/login/material-list-time?',		
+						 　 	data:obj,
+						 　 	type: 'GET',
+						 　 	dataType:'json',
+						 　 	success:function(data){
+									 var list = data.data.pagedata;
+									 var newList = arr1.concat(list);
+									 arr1=newList;
+							 		var len = list.length;
+							 		var newLen = newList.length;
+							 		var html = '';
+							 		if(len==0){
+							 			$(".dropload-down").hide();
+							 		}else{
+							 			$(".dropload-load").show();
+							 			for(var i=0;i<newLen;i++){
+								 			var date = '未填写';
+								 			if(newList[i].create_time){
+								 				var time = new Date(newList[i].create_time*1000);
+								 				date = time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate();
+								 			}
+								 			html+='<li>';
+											html+='	<div show="0" class="detail">';
+											html+='		<div>废物重量(kg)：'+newList[i].all_wiget+'</div>';
+											html+='		<div>创建时间：'+date+'</div>';
+											html+='	</div>';
+											html+='</li>';
+								 		}
+								 		$('.list-box').html(html);
+								 		page+=1;
+								 		me.lock();
+								 		me.resetload();
+							 		}
+								},
+							 　 error:function(err){
+							　　	console.log(err);
+									$(".dropload-down").hide();
+							 		me.resetload();
+								}
+							})
+						}
+						
+		            }
+				});
+			}
+		</script>
+	</body>
+
+</html>

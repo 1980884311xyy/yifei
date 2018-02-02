@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>完成详情</title>
+		<link rel="stylesheet" type="text/css" href="../css/style.css" />
+		<link rel="stylesheet" href="../css/lrtk.css" />
+		<style type="text/css" media="screen">
+			#type{height: 30px;
+    border-radius: 6px;
+    float: left;
+    margin: 0 0% 0 1%;
+    border: none;
+    border: 1px solid #00BFFF;
+    text-align: center;}
+		</style>
+
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="title-box">完成详情<span onclick="javascript :history.back(-1);" style="margin-right: 10px;float: right;font-size: 20px;">×</span></div>
+			<!-- <div class="search">
+				<select id="type">
+					<option value="">查询条件</option>
+					<option value="name">名称</option>
+					<option value="grade">类型</option>
+					<option value="address">地址</option>
+					<option value="state">状态</option>
+				</select>
+				<input class="input" id="search" type="text" placeholder="请输入查询条件">
+				<div onclick="chaxun1()" class="button" style="text-align: center;height: 32px;line-height: 32px; margin-left: 16px;">查询</div>
+			</div> -->
+			<div class="audit">
+				<table class="audit-1" cellpadding="0" cellspacing="0" width="500">
+					<!-- <tr>
+						<td>id</td>
+						<td>医院名称</td>
+						<td>地址</td>
+						<td>联系电话</td>
+						<td>完成状态</td>
+						<td>备注</td>
+						<td>完成时间</td>
+						<!-- <td>车辆总重</td> -->
+						<!-- <td>入库过磅图</td>
+						<td>入库签名图</td>
+						<td>查看详情</td> 
+					</tr> -->
+					<!--<tr>
+						<td>
+							<div class="ac" >
+							      <img id='img' class='min' src='../images/bg.jpg'>
+						    </div>
+						</td>
+						
+					</tr>-->
+				</table>
+			</div>
+			<div id="pagination"></div>
+
+		</div>
+	</body>
+	<script src="../laydate/laydate.js"></script>
+	<script src='../js/jquery-3.1.1.min.js' type='text/javascript'></script>
+	<script src='../js/call_info.js' type='text/javascript'></script>
+	<script src='../js/jquery.imgbox.pack.js'></script>
+	<script src="../laypage/laypage.js"></script>
+	
+	<script type="text/javascript">
+		var pagex = 0;
+		var statusArr = ["未拜访","已拜访","储藏间","待审核","审核完成"]
+		var typeArr=["到访上传门投","上传储物间","上传合同照片","领取任务","放弃任务","修改备注"]
+		$(document).ready(function() {
+			listFn()
+		}) 
+		function listFn(curr){
+			var num=curr||1;
+			var id = location.href.split("=")[1]
+			var controller = 'user/salesman-detail?id='+id+'&page='+num;
+			callInfo.sendData(controller, {}, 'GET', function(data) {
+				if(data.code == 10000) {
+					var html = ''
+					var data1=data.data.pagedata;
+					console.log(data1)
+					pagex =data.data.query.countpage;//总页数
+					var len = data1.length;
+					html += '<tr>'
+					html += '<td>id</td>'
+					html += '<td>医院名称</td>'
+					html += '<td>类型</td>'
+					html += '<td>地址</td>'
+					html += '<td>联系电话</td>'
+					html += '<td>状态</td>'
+					html += '<td>创建时间</td>'
+					html += '<td>备注</td>'
+					html += '<td>放弃备注</td>'
+					html += '</tr>'
+					for(var i = 0; i < len; i++) {
+					// var time = new Date(data1[i].create_time * 1000).toLocaleDateString()
+						var time=getLocalTime(data1[i].create_time) 
+						html += '<tr>'
+						html += '<td>' + data1[i].id + '</td>'
+						html += '<td>' + data1[i].name + '</td>'
+						html += '<td>' + typeArr[Number(data1[i].type)-1] + '</td>'
+						html += '<td>' + data1[i].address + '</td>'
+						html += '<td>' + data1[i].phone + '</td>'
+						html += '<td>' + statusArr[Number(data1[i].status)] + '</td>'
+						html +='<td>'+time+'</td>'
+						html += '<td>' + data1[i].remarks + '</td>'
+						html += '<td>' + data1[i].give_remarks + '</td>'
+						html += '</tr>'
+					}
+					$('.audit-1').html(html);
+					laypage({
+					        cont: $('#pagination'), //容器。值支持id名、原生dom对象，jquery对象,
+					        pages:pagex, //总页数
+					        skip: true, //是否开启跳页
+					        skin: '#AF0000',
+					        groups: 3, //连续显示分页数
+					        curr:num,//当前页
+					        jump: function(page, first) {
+					            if (!first) {
+					                listFn(page.curr);
+					            }
+					        }
+					});
+					
+				}
+			})
+		}
+
+		function getLocalTime(nS) { 
+			return new Date(parseInt(nS) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g," "); 
+		 } 
+
+		 
+	</script>
+
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>企业监控</title>
+		<link rel="stylesheet" type="text/css" href="../css/style.css" />
+	</head>
+	<body>
+		<div class="container">
+			<div class="title-box">企业监控<span class="tianjia" onclick="tianjia()" style="margin-left: 10px;"><a style="border-bottom: 1px solid #fff;">添加</a></span></div>
+		    <div class="zhezhao">
+
+			</div>
+			<div class="audit">
+				<table class="audit-1" border="0" cellpadding="0" cellspacing="0" width="500">
+					<tr class="tr">
+						<td>ID</td>
+						<td>编号</td>
+						<td>注册ID</td>
+						<td>医院名称</td>
+						<td>设备名称</td>
+						<td>创建时间</td>
+						<td>操作</td>
+					</tr>
+					<!--<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td><img class="xiu" onclick="xiu()" src="../images/xiugai.png" alt="" /></td>
+					</tr>-->
+				</table>
+			</div>
+			
+			<div class="deposi" style="height: 320px;">
+				<img class="QX-2" src="../images/xx.png" />
+				<div style="margin: auto;text-align: center;margin-top:20px;">
+					<div class="box" >
+						<!-- <select name="sel1"  id="company_id" class="name1">
+					        
+					    </select> -->
+					</div>
+					<!--医院选择方案1-->
+					<input type="hide"  list="mydata" class="shuruk"  placeholder="医院名称" id="company_id"/>
+					    <datalist id="mydata">
+					        <!--<option label="Top1" value="让子弹飞">-->
+					    </datalist>
+					<!--医院选择方案2-->
+					<!--<input placeholder="公司名称" style="margin-left: 26px;" class="shuruk" id="company_id" onkeyup="return HospitaSearch(event)" />-->
+					<!--<ol class="dataUl" style="max-height: 226px;overflow-y: auto;position: absolute;top: 75px;background: #fff;border: 1px solid #eee;">
+						<li></li>
+					</ol>-->
+					<input placeholder="注册ID号" class="shuruk" id="reg_id" />
+					<input placeholder="设备名称"  class="shuruk" id="device_name" />
+					<input placeholder="编号"  class="shuruk" id="code_id" />
+					
+				</div>
+				
+				<div class="Jia1 Jia" onclick="tjia()" style="margin-top: 30px;">添 加</div>
+			</div>
+			<div class="deposit" style="height: 290px;">
+				<img class="QX-2" src="../images/xx.png" />
+				<div style="margin: auto;text-align: center;margin-top:20px;">
+					<input placeholder="注册ID号"  class="shuruk" id="reg_id1" />
+					<input placeholder="设备名称"  class="shuruk" id="device_name1" />
+					<input placeholder="编号"  class="shuruk" id="code_id1" />
+				</div>
+				<div class="Jia1 Jia" onclick="tjia1()" style="margin-top: 30px;">确定</div>
+			</div>
+		</div>
+	</body>
+	<script src='../js/jquery-1.8.3.min.js' type='text/javascript'></script>
+	<script type="text/javascript" src="../js/call_info1.js"></script>
+	<script type="text/javascript">
+		//医院数据列表
+		var HospitalList = null;
+
+		//监控列表 
+		var object = {};
+		$(document).ready(function () {
+			sessionStorage.setItem('company_id',company_id);
+	        var controller = 'enterprise.do?method=enterpriseMonitorLists';
+	        callInfo.sendData(controller, {}, 'GET', function (data) {
+	            if (data.code == 10000) {
+	                var len = data.data.length
+	                for (var i = 0; i < len; i++) {
+	                    var data1 = data.data[i]
+	                    var html = '<tr><td>'+data1.serial+'</td><td>'+data1.code_id+'</td><td>'+data1.reg_id+'</td><td>'+data1.company_name+'</td><td>'+data1.device_name+'</td><td>'+data1.create_time+'</td><td><img monitor_id ="'+data1.monitor_id +'" device_name ="'+data1.device_name +'" code_id ="'+data1.code_id +'" reg_id ="'+data1.reg_id +'" company_id ="'+data1.company_id +'" class="xiu" onclick="xiu(this)"src="../images/xiugai.png" alt="" title="修改" /></td></tr>'
+	                    $(".audit-1").append(html)
+	                }
+	            }
+	        });
+        });
+        //添加监控
+        function tjia(){
+        	var reg_id = $('#reg_id').val();
+        	var device_name = $('#device_name').val();
+        	var code_id = $('#code_id').val()
+        	var company_id = $('#company_id').val()
+        	console.log(company_id)
+        	var params = {
+        		 reg_id: reg_id,
+        		 device_name: device_name,
+        		 code_id: code_id,
+        		 company_id:company_id,
+        	}
+        	var controller = 'enterprise.do?method=enterpriseAddMonitor';
+	        callInfo.sendData(controller,params, 'POST', function (data) {
+	            if (data.code == 10000) {
+	                $('.zhezhao').hide()
+					$('.deposi').hide()
+				    window.location = "qiye.html"
+	            }
+	        });
+        }
+        //修改监控
+        var xiu = function(dom){
+        	    var code_id = $(dom).attr('code_id');
+				var reg_id = $(dom).attr('reg_id');
+				var device_name = $(dom).attr('device_name');
+				var monitor_id = $(dom).attr('monitor_id');
+				$('#reg_id1').val(reg_id);
+				$('#device_name1').val(device_name);
+				$('#code_id1').val(code_id);
+				sessionStorage.setItem('monitor_id',monitor_id);
+				$(".deposit").show()
+				$(".zhezhao").css("height", $(document).height());
+				$(".zhezhao").css("width", $(document).width());
+				$(".zhezhao").show();
+			}
+        function tjia1(){
+        	var reg_id = $('#reg_id1').val();
+        	var device_name = $('#device_name1').val();
+        	var code_id = $('#code_id1').val()
+        	var id = sessionStorage.getItem('monitor_id');
+        	var params = {
+        		 reg_id: reg_id,
+        		 device_name: device_name,
+        		 code_id: code_id,
+        		 id:id,
+        	}
+        	var controller = 'enterprise.do?method=enterpriseMonitorEdit';
+	        callInfo.sendData(controller,params, 'POST', function (data) {
+	            if (data.code == 10000) {
+	                $('.zhezhao').hide()
+					$('.deposi').hide()
+				    window.location = "qiye.html"
+	            }
+	        });
+        }
+        //搜索医院名称 方案1
+		var tianjia = function() {
+			$(".deposi").show()
+			$(".zhezhao").css("height", $(document).height());
+			$(".zhezhao").css("width", $(document).width());
+			$(".zhezhao").show();
+
+			var controller = 'enterprise.do?method=enterpriseFindHospitals';
+	        callInfo.sendData(controller,{}, 'POST', function (data) {
+	           if (data.code == 10000) {
+                         object = data.data;
+						 for (var key in data.data) {
+						 	var data1 = data.data[key];
+						    var html = '<option>'+data1.name+'</option>'
+	                        $("#mydata").append(html)
+						 }
+
+	             }
+	          
+	        });
+
+		}
+	//搜索医院名称 方案2
+//		var tianjia = function() {
+//			$(".deposi").show()
+//			$(".zhezhao").css("height", $(document).height());
+//			$(".zhezhao").css("width", $(document).width());
+//			$(".zhezhao").show();
+//
+//			var controller = 'enterprise.do?method=enterpriseFindHospitals';
+//	        callInfo.sendData(controller,{}, 'GET', function (data) {
+//	            if (data.code == 10000) {
+//                      HospitalList = data.data;
+//						console.log('所有医院的name数据',HospitalList)
+//	            }
+//	        });
+//
+//		}
+//		 输入框改变是进行搜索
+//		function HospitaSearch(e){
+//			var e = e || window.e || arguments.callee.caller.arguments[0];
+//		    var keynum;
+//		    keynum = window.event ? e.keyCode : e.which;
+//		    if(keynum==38 || keynum==40) return;
+//		    //$(this)在此处还得处理,所以直接用了company_id
+//		    var k = $('#company_id').val();
+//		    console.log(k);
+//		    // 先定义一个变量存储要查的地方
+//		    var arr = [];
+//		    var patt = new RegExp(k);
+//	        for(var i = 0; i < HospitalList.length; i++){
+//	            if(patt.test(HospitalList[i].name)){
+//	                arr.push(i);
+//	            }
+//	        }
+//	        console.log('arr',arr);
+//	        if(arr.length){
+//	        	console.log(arr.length);
+//	        	var html = '';
+//	        	for (var i = 0; i < arr.length; i++) {
+//	        		html += '<li class="a_block"   listId='+arr[i]+' name = '+HospitalList[i].name+'>'+HospitalList[arr[i]].name+'</li>';
+//	        		//在li 加点击事件   把数据选中放到第一个input 里面  li 里面有 listId  可以拿到存起来
+//	        	}
+//      		$('.dataUl').html(html);
+//	        };
+//		}
+//		$(document).on("click",".a_block",function(){
+////			alert($(this).attr('name'));
+//			var val = $(this).attr('name');
+//			$("#company_id").val(val);
+//			 $(".dataUl").hide()
+//
+//		})
+//      $("#company_id").focus(function(){
+//         $(".dataUl").show()
+//      });
+      
+		//红色取消
+		$('.QX-2').click(function() {
+			$('.zhezhao').hide();
+			$(".deposi").hide();
+			$(".deposit").hide();
+
+		})
+	</script>
+
+</html>

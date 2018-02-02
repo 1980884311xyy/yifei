@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>医废统计列表</title>
+		<link rel="stylesheet" href="../css/core.css" />
+		<link rel="stylesheet" href="../css/tree.css" />
+		
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	</head>
+<style>
+	.container{
+	position:relative;
+	min-height: 520px;
+	margin: 20px;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	padding-bottom: 50px;
+	box-shadow: 0px 2px 2px #ccc;
+	background: #fff;
+	border-radius: 5px;
+}
+	.title-box{
+	height: 32px;
+	line-height: 32px;
+	padding-left: 20px;
+	background-color: #373D41;
+	color: #fff;
+	font-weight:bold;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+.second > li > .flex {
+	padding-left:25px;
+}
+.third>li>.flex{
+	padding-left:40px;
+}
+</style>
+	<body>
+		<div class="container">
+			<div class="title-box">医废统计</div>
+			<ul id="groupRule" class="first">
+				<!-- <li>
+					<div class="flex">
+						<h2 show="0" onclick="showSecond(this)">A市</h2>
+						<b class="right"><img class="img" src="../images/top.png" alt=""></b>
+					</div>
+					<ul  class="second">
+						<li>
+							<div class="flex">
+								<p show="0" onclick="showThird(this)">A医院</p>
+								<b class="right"><img class="img" src="../images/top.png" alt=""></b>
+							</div>
+							<ul class="third">
+								<li>
+									<p>A科室</p>
+								</li>
+								<li>
+									<p>A科室</p>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<div class="flex">
+								<p show="0" onclick="showThird(this)">B医院</p>
+								<b class="right"><img class="img" src="../images/top.png" alt=""></b>
+							</div>
+							<ul class="third">
+								<li>
+									<p>A科室</p>
+								</li>
+								<li>
+									<p>A科室</p>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li> -->
+			</ul>
+			
+		</div>
+		<script src="../js/jquery-3.1.1.min.js"></script>
+		<script type="text/javascript">
+		    var hospital = '';
+    		$(document).ready(function() {
+ 				var obj = {};
+		 		obj.roleid = "0000";//data.data.user_detil.roleid;
+		 		obj.parentid = "pro_01";//data.data.user_detil.provinceid;
+		 		$.ajax({
+					url: 'http://ws.520m.com.cn/api/login/power-list?',		
+			 　 	data:obj,
+			 　 	type: 'GET',
+			 　 	dataType:'json',
+			 　 	success:function(data){
+				 		console.log(data);
+				 		var list = data.data.str;
+				 		var len = list.length;
+				 		var html = '';
+				 		var one = data.data.one;
+				 		var two = data.data.two;
+				 		var three = data.data.three;
+				 		var four = data.data.four;
+				 		for(var i=0;i<len;i++){
+				 			html+='<li>';
+							html+='	<div class="flex">';
+							html+='		<h2>'+list[i].region_name+'（'+list[i].count+'）'+'</h2>';
+							html+='		<p one="'+one+'" two="'+two+'" three="'+three+'" four="'+four+'" class="data-detail" onclick="goDetails(this,1)">统计详情</p>';
+							html+='		<b class="right"><img region_code="'+list[i].region_code+'" show="0" onclick="showSecond(this)" class="img" src="../images/top.png" alt=""></b>';
+							html+='	</div>';
+							html+='	<ul  class="second"></ul>';
+							html+='</li>';
+				 		}
+				 		$('#groupRule').html(html)
+					},
+				 　 error:function(err){
+				　　	console.log(err);
+					}
+				});			 			
+    			$('.second').hide();
+    			$('.third').hide();
+			});
+    		// 二级菜单显示或隐藏
+			function showSecond(dom){
+				var status = $(dom).attr('show');
+				var region_code = $(dom).attr('region_code');
+				if(status==0){
+					getArea(region_code,dom);
+					$(dom).parent().parent().siblings('.second').show(500);
+					$(dom).attr('show',1);
+					$(dom).css('transform','rotate(180deg)');
+				}else if(status==1){
+					$(dom).parent().parent().siblings('.second').hide(500);
+					$(dom).attr('show',0);
+					$(dom).css('transform','rotate(90deg)')
+				}
+			}
+			// 三级菜单的显示或隐藏
+			function showThird(dom){
+				var status = $(dom).attr('show');
+				var region_code = $(dom).attr('region_code');
+				if(status==0){
+					getHosipital(region_code,dom);
+					$(dom).parent().parent().siblings('.third').show(500);
+					$(dom).attr('show',1);
+					$(dom).css('transform','rotate(180deg)');
+				}else if(status==1){
+					$(dom).parent().parent().siblings('.third').hide(500);
+					$(dom).attr('show',0);
+					$(dom).css('transform','rotate(90deg)');
+				}
+			}
+			// 四级菜单的显示或隐藏
+			function showFour(dom){
+				var status = $(dom).attr('show');
+				var company = $(dom).attr('company');
+				if(status==0){
+					getDepartment(company,dom);
+					$(dom).parents().eq(2).next().show(500);
+					$(dom).attr('show',1);
+					$(dom).css('transform','rotate(180deg)');
+				}else if(status==1){
+					$(dom).parents().eq(2).next().hide(500);
+					$(dom).attr('show',0);
+					$(dom).css('transform','rotate(90deg)');
+				}
+			}
+			// 根据市获取区县列表
+			function getArea(idCode,dom){
+				var obj = {};
+		 		obj.region_code = idCode;
+		 		$.ajax({
+					url: 'http://ws.520m.com.cn/api/login/city-list?',		
+			 　 	data:obj,
+			 　 	type: 'GET',
+			 　 	dataType:'json',
+			 　 	success:function(data){
+				 		console.log(data);
+				 		if(data.code==10000){
+				 			var list = data.data;
+				 			var len = list.length;
+				 			var html = '';
+				 			for(var i=0;i<len;i++){
+				 				html+='<li>';
+								html+='	<div class="flex">';
+								html+='		<p class="title-name">'+list[i].region+'（'+list[i].count+'）'+'</p>';
+								html+='		<p region_code="'+list[i].region_code+'" one="'+list[i].one+'" two="'+list[i].two+'" three="'+list[i].three+'" four="'+list[i].four+'" class="data-detail" onclick="goDetails(this,2)">统计详情</p>';
+								html+='		<b class="right"><img region_code="'+list[i].region_code+'" show="0" onclick="showThird(this)" class="img" src="../images/top.png" alt=""></b>';
+								html+='	</div>';
+								html+='	<ul class="third">';
+								html+='	</ul>';
+								html+='</li>';
+				 			}
+				 			if(dom){
+				 				$(dom).parent().parent().siblings('.second').html(html);
+				 			}else{
+				 				$('#groupRule').html(html);
+				 			}
+				 		}
+					},
+				 　 error:function(err){
+				　　	console.log(err);
+					}
+				});
+			}
+			// 根据区县列表获取医院列表
+			function getHosipital(idCode,dom){
+				var obj = {};
+		 		obj.region_code = idCode;
+		 		$.ajax({
+					url: 'http://ws.520m.com.cn/api/login/hospital-list?',		
+			 　 	data:obj,
+			 　 	type: 'GET',
+			 　 	dataType:'json',
+			 　 	success:function(data){
+				 		console.log(data);
+				 		if(data.code==10000){
+				 			var list = data.data;
+				 			var len = list.length;
+				 			var html = '';
+				 			for(var i=0;i<len;i++){
+				 				var id = list[i].company_id;
+				 				html+='	<li>';
+				 				html+='	<div class="flex">';
+								html+='		<p class="title-name">'+list[i].name+'（'+list[i].count+'）'+'</p>';
+								html+='		<p region_code="'+list[i].regioncode+'" one="'+list[i].one+'" two="'+list[i].two+'" three="'+list[i].three+'" four="'+list[i].four+'" class="data-detail" onclick="goDetails(this,3)">统计详情</p>';
+								html+='		<b class="right"><img  company="'+id+'" show="0" onclick="showFour(this)" class="img" src="../images/top.png" alt=""></b>';
+								html+='	</div>';
+								
+								html+='</li>';
+								html+='	<ul class="four">';
+								html+='	</ul>';
+				 			}
+				 			if(dom){
+				 				$(dom).parent().parent().siblings('.third').html(html);
+				 			}else{
+				 				$('#groupRule').html(html);
+				 			}
+				 		}
+					},
+				 　 error:function(err){
+				　　	console.log(err);
+					}
+				});
+			}
+			// 获取科室列表
+			function getDepartment(id,dom){
+				var obj = {};
+    			obj.companyid = id;
+    			$.ajax({
+				 url: 'http://ws.520m.com.cn/api/login/department-list?',		
+			 　 	data:obj,
+			 　 	type: 'GET',
+			 　 	dataType:'json',
+			 　 	success:function(data){
+				 		console.log(data);
+				 		if(data.code==10000){
+				 			var list = data.data.request;
+				 			var len = list.length;
+				 			var html = '';
+				 			for(var i=0;i<len;i++){
+				 				var date = new Date(list[i].create_time*1000);
+					 			var timeText = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+					 			html+='<li>';
+								html+='	<div class="flex">';
+								html+='		<p num="'+list[i].num+'" hospital_id="'+list[i].hospital_id+'" onclick="goWebdepartment(this)" class="title-name">'+list[i].name+'（'+list[i].count+'）'+'</p>';
+								html+='		<p class="data-detail" keshiId="'+list[i].id+'" hospital_id="'+list[i].hospital_id+'" one="'+list[i].one+'" two="'+list[i].two+'" three="'+list[i].three+'" four="'+list[i].four+'"  onclick="goDetails(this,4)">统计详情</p>';
+								//html+=list[i].name;+'（'+list[i].count+'）'+'<img num="'+list[i].num+'" hospital_id="'+list[i].hospital_id+'" show="0" onclick="showDetails(this)" src="../images/top.png" alt="">';
+								html+='	</div>';
+								html+='</li>';
+				 			}
+							//  
+				 			$(dom).parents().eq(2).next().html(html);
+				 		}else{
+				 			// var html = '<p style="height:100px;line-height:100px;text-align:center">暂无科室信息</p>';
+				 			// $('.container').html(html);
+				 		}
+				 		
+					},
+				 　 error:function(err){
+				　　	console.log(err);
+					}
+				});
+			}
+			// 跳转到科室详情
+			function goWebdepartment(dom){
+				var id = $(dom).attr('hospital_id');
+				var num = $(dom).attr('num');
+				sessionStorage.setItem('hospitalId',id);
+				sessionStorage.setItem('num',num);
+				window.location.href = './webdepartment.html';
+			}
+			// 跳转到统计详情
+			function goDetails(dom,type){
+				var obj = {};
+				obj.one = $(dom).attr('one');
+				obj.two = $(dom).attr('two');
+				obj.three = $(dom).attr('three');
+				obj.four = $(dom).attr('four');
+				var json = JSON.stringify(obj);
+				sessionStorage.setItem('typeData',json);
+				sessionStorage.setItem('detailType',type);
+				if(type==2||type==3){
+					var region_code = $(dom).attr('region_code');
+					sessionStorage.setItem('region_code',region_code);
+				}
+				window.location.href = './webtongjixiangqing.html';
+			}
+			
+
+		</script>
+	</body>
+
+</html>
